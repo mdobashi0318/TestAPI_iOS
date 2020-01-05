@@ -15,6 +15,8 @@
 		D0C3411D23BF07C600507377 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D0C3411B23BF07C600507377 /* LaunchScreen.storyboard */; };
 		D0C3412823BF07C600507377 /* TestAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C3412723BF07C600507377 /* TestAPITests.swift */; };
 		D0C3413323BF07C600507377 /* TestAPIUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C3413223BF07C600507377 /* TestAPIUITests.swift */; };
+		D0D6AC6623C1B6C500968258 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0D6AC6523C1B6C500968258 /* RegisterViewController.swift */; };
+		D0D6AC6923C1E56700968258 /* ViewControllerExtennsion.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0D6AC6823C1E56700968258 /* ViewControllerExtennsion.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +53,8 @@
 		D0C3412E23BF07C600507377 /* TestAPIUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestAPIUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0C3413223BF07C600507377 /* TestAPIUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAPIUITests.swift; sourceTree = "<group>"; };
 		D0C3413423BF07C600507377 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D0D6AC6523C1B6C500968258 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
+		D0D6AC6823C1E56700968258 /* ViewControllerExtennsion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerExtennsion.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,6 +136,8 @@
 				D0C3411E23BF07C600507377 /* Info.plist */,
 				D0C3411023BF07C200507377 /* AppDelegate.swift */,
 				D0C3411423BF07C200507377 /* ViewController.swift */,
+				D0D6AC6523C1B6C500968258 /* RegisterViewController.swift */,
+				D0D6AC6723C1E52B00968258 /* Extensions */,
 				D034E45F23C0C43300610425 /* Other */,
 				D0C3411923BF07C600507377 /* Assets.xcassets */,
 				D0C3411B23BF07C600507377 /* LaunchScreen.storyboard */,
@@ -155,6 +161,14 @@
 				D0C3413423BF07C600507377 /* Info.plist */,
 			);
 			path = TestAPIUITests;
+			sourceTree = "<group>";
+		};
+		D0D6AC6723C1E52B00968258 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				D0D6AC6823C1E56700968258 /* ViewControllerExtennsion.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -334,6 +348,8 @@
 				D034E45E23C0C41500610425 /* AlertManager.swift in Sources */,
 				D0C3411523BF07C200507377 /* ViewController.swift in Sources */,
 				D0C3411123BF07C200507377 /* AppDelegate.swift in Sources */,
+				D0D6AC6923C1E56700968258 /* ViewControllerExtennsion.swift in Sources */,
+				D0D6AC6623C1B6C500968258 /* RegisterViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

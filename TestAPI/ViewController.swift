@@ -8,10 +8,22 @@
 
 import UIKit
 
+/// リクエストするURL
+let url = URL(string: "http://localhost:3000/api/v1/users")
+
+/// iOS13以降でモーダルを閉じた時にViewWillAppearを呼ぶ
+let ViewUpdate: String = "viewUpdate"
+
+
+
+
+
 class ViewController: UITableViewController {
 
-    /// リクエストするURL
-    let url = URL(string: "http://localhost:3000/api/v1/users")
+    
+    
+    /// テーブルビューを上からスワイプしたとき
+    let refreshCtr = UIRefreshControl()
     
     
     /// ユーザー名を格納
@@ -23,17 +35,23 @@ class ViewController: UITableViewController {
         }
     }
     
+    
+    
 
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(rightBarAction))
+        NotificationCenter.default.addObserver(self, selector: #selector(callViewWillAppear(notification:)), name: NSNotification.Name(rawValue: ViewUpdate), object: nil)
+        
         tableView = UITableView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height), style: .grouped)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.refreshControl?.addTarget(self, action: #selector(ViewController.refresh(sender:)), for: .valueChanged)
+        tableView.refreshControl = refreshCtr
+        refreshCtr.addTarget(self, action: #selector(ViewController.refresh(sender:)), for: .valueChanged)
 
         
     }
@@ -46,6 +64,10 @@ class ViewController: UITableViewController {
     
     
     
+    @objc override func rightBarAction() {
+        let navigationController = UINavigationController(rootViewController: RegisterViewController())
+        present(navigationController, animated: true)
+    }
     
     
     // MARK: UITableViewDelegate, UITableViewDataSource
@@ -59,8 +81,7 @@ class ViewController: UITableViewController {
     
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//                postRequest()
-        putRequest(at: indexPath.row)
+
     }
     
     
@@ -112,32 +133,7 @@ class ViewController: UITableViewController {
     }
     
     
-    /// ユーザー名を作成する
-    func postRequest() {
-        var request = URLRequest(url: url!)
-        request.httpMethod = "POST"
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        let params:[String:Any] = [
-            "user":["name":"新ユーザ"]
-        ]
-        
-        
-        do {
-            request.httpBody = try JSONSerialization.data(withJSONObject: params, options: .fragmentsAllowed)
-            let task:URLSessionDataTask = URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
-                print("data")
-                print(data!)
-                print("respnse")
-                print(response!)
-                
-            })
-            task.resume()
-            
-        } catch {
-            print("エラー")
-        }
-    }
+    
     
     
     /// ユーザ名を更新する
@@ -169,6 +165,10 @@ class ViewController: UITableViewController {
            }
        }
 
+    
+    @objc func callViewWillAppear(notification: Notification) {
+        self.viewWillAppear(true)
+    }
     
 
 }
