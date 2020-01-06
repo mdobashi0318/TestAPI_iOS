@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Unbox
 
 /// リクエストするURL
 let url = URL(string: "http://localhost:3000/api/v1/users")
@@ -27,7 +28,7 @@ class ViewController: UITableViewController {
     
     
     /// ユーザー名を格納
-    var usersModel: [[String: Any]]? {
+    var usersModel: [UsersModel]? {
         didSet {
             DispatchQueue.main.async {
                 self.tableView.reloadData()
@@ -74,7 +75,7 @@ class ViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "cell")!
-        cell.textLabel?.text = usersModel?[indexPath.row]["name"] as? String
+        cell.textLabel?.text = usersModel?[indexPath.row].name
         
         return cell
     }
@@ -134,9 +135,9 @@ class ViewController: UITableViewController {
             
             do {
                 let json = try JSONSerialization.jsonObject(with: data!, options: .fragmentsAllowed) as! [Any]
-                self.usersModel = json.map { (user) -> [String: Any] in
+                self.usersModel = json.map { (user) -> UsersModel in
                     print(user)
-                    return user as! [String: Any]
+                    return try! unbox(dictionary: user as! UnboxableDictionary)
                 }
             } catch {
                 AlertManager().alertAction(viewController: self, title: "Error", message: error as! String, handler: { (action) in

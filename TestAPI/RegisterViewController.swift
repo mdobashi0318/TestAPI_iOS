@@ -25,10 +25,10 @@ class RegisterViewController: UIViewController {
         
         switch mode {
         case .edit:
-            view.nameTextField.text = userModel?["name"] as? String
+            view.nameTextField.text = userModel?.name
             
         case .detail:
-            view.nameTextField.text = userModel?["name"] as? String
+            view.nameTextField.text = userModel?.name
             view.nameTextField.isUserInteractionEnabled = false
             
         default:
@@ -38,7 +38,7 @@ class RegisterViewController: UIViewController {
     }()
     
     
-    private var userModel: [String:Any]?
+    private var userModel: UsersModel?
     
     
     private var mode: Mode = .add
@@ -57,7 +57,7 @@ class RegisterViewController: UIViewController {
     /// - Parameters:
     ///   - mode: Mode Enum
     ///   - userModel: 開くuserModelを格納
-    convenience init(mode: Mode, userModel:[String:Any]?) {
+    convenience init(mode: Mode, userModel:UsersModel?) {
         self.init()
         self.mode = mode
         self.userModel = userModel
@@ -154,7 +154,7 @@ class RegisterViewController: UIViewController {
     /// ユーザ名を更新する
     func putRequest(name: String) {
         
-        guard let id = userModel!["id"] else {
+        guard let id = userModel!.id else {
             print("idの取得に失敗")
             return
         }
