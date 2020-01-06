@@ -59,7 +59,7 @@ class ViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        getModel()
+        getrequest()
     }
     
     
@@ -81,7 +81,7 @@ class ViewController: UITableViewController {
     
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-
+        navigationController?.pushViewController(RegisterViewController(mode: .detail, userModel: usersModel?[indexPath.row]), animated: true)
     }
     
     
@@ -96,8 +96,22 @@ class ViewController: UITableViewController {
     
     
     
+    
+    
+     /// 編集と削除のスワイプをセット
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
+        let edit = UIContextualAction(style: .normal, title: "編集") { _,_,_  in
+            let navigationController = UINavigationController(rootViewController: RegisterViewController(mode: .edit, userModel: self.usersModel?[indexPath.row]))
+            self.present(navigationController, animated: true)
+        }
+        edit.backgroundColor = .orange
+        
+        return UISwipeActionsConfiguration(actions: [edit])
+    }
+    
     @objc func refresh(sender: UIRefreshControl) {
-        getModel()
+        getrequest()
         sender.endRefreshing()
     }
     
@@ -108,16 +122,21 @@ class ViewController: UITableViewController {
     // MARK: Request
     
     /// 全ユーザー名を取得する
-    func getModel() {
+    func getrequest() {
         
         let task: URLSessionTask = URLSession.shared.dataTask(with: url!) { data, response, error in
-
+            
+            if let _response = response {
+                print(_response)
+            } else {
+                print("NO RESPONSE")
+            }
+            
             do {
                 let json = try JSONSerialization.jsonObject(with: data!, options: .fragmentsAllowed) as! [Any]
                 self.usersModel = json.map { (user) -> [String: Any] in
                     print(user)
                     return user as! [String: Any]
-                    
                 }
             } catch {
                 AlertManager().alertAction(viewController: self, title: "Error", message: error as! String, handler: { (action) in
@@ -133,39 +152,8 @@ class ViewController: UITableViewController {
     }
     
     
-    
-    
-    
-    /// ユーザ名を更新する
-    func putRequest(at row: Int) {
-        
-        let acccesURL = URL(string: String("\(url!)/\((String(row + 1)))"))
-           var request = URLRequest(url: acccesURL!)
-           request.httpMethod = "PUT"
-           request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-           
-           let params:[String:Any] = [
-               "user":["name":"更新名"]
-               
-           ]
-           
-           
-           do {
-               request.httpBody = try JSONSerialization.data(withJSONObject: params, options: .fragmentsAllowed)
-               let task:URLSessionDataTask = URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
-                   print("data")
-                   print(data!)
-                   print("respnse")
-                   print(response!)
-                   
-               })
-               task.resume()
-           } catch {
-               print("エラー")
-           }
-       }
+    // MARK: Notification
 
-    
     @objc func callViewWillAppear(notification: Notification) {
         self.viewWillAppear(true)
     }
