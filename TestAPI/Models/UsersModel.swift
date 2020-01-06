@@ -24,6 +24,12 @@ class UsersModel: Unboxable {
     /// 名前
     let name: String?
     
+    
+    // JSONをUsersModelに格納できるよう変換
+    class func unboxDictionary(dictionary: Any) -> UsersModel {
+        return  try! unbox(dictionary: dictionary as! UnboxableDictionary)
+    }
+    
 }
 
 

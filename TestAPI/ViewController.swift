@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Unbox
 
 /// リクエストするURL
 let url = URL(string: "http://localhost:3000/api/v1/users")
@@ -137,7 +136,7 @@ class ViewController: UITableViewController {
                 let json = try JSONSerialization.jsonObject(with: data!, options: .fragmentsAllowed) as! [Any]
                 self.usersModel = json.map { (user) -> UsersModel in
                     print(user)
-                    return try! unbox(dictionary: user as! UnboxableDictionary)
+                    return UsersModel.unboxDictionary(dictionary: user)
                 }
             } catch {
                 AlertManager().alertAction(viewController: self, title: "Error", message: error as! String, handler: { (action) in
