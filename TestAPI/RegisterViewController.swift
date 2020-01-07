@@ -27,10 +27,14 @@ class RegisterViewController: UIViewController {
         case .edit:
             view.nameTextField.text = userModel?.name
             
+            view.textView.text = userModel?.text
         case .detail:
             view.nameTextField.text = userModel?.name
             view.nameTextField.isUserInteractionEnabled = false
             
+            
+            view.textView.text = userModel?.text
+            view.textView.isUserInteractionEnabled = false
         default:
             break
         }
@@ -97,12 +101,21 @@ class RegisterViewController: UIViewController {
             return
         }
         
+        
+        guard !registerView.nameTextField.text!.isEmpty else {
+            AlertManager().alertAction(viewController: self,
+                                       title: "", message: "テキストが入力されていません") { _ in return
+            }
+            return
+        }
+        
         let name: String = registerView.nameTextField.text!
+        let text: String = registerView.textView.text!
         
         if mode == .add {
-            postRequest(name: name)
+            postRequest(name: name, text: text)
         } else if mode == .edit {
-            putRequest(name: name)
+            putRequest(name: name, text: text)
         }
     }
     
@@ -112,13 +125,13 @@ class RegisterViewController: UIViewController {
     // MARK: Request
     
     /// ユーザー名を作成する
-    func postRequest(name: String) {
+    func postRequest(name: String, text: String) {
         var request = URLRequest(url: url!)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
         let params:[String:Any] = [
-            "user":["name":name]
+            "user":["name":name, "text":text]
         ]
         
         
@@ -152,7 +165,7 @@ class RegisterViewController: UIViewController {
     
     
     /// ユーザ名を更新する
-    func putRequest(name: String) {
+    func putRequest(name: String, text: String) {
         
         guard let id = userModel!.id else {
             print("idの取得に失敗")
@@ -165,7 +178,7 @@ class RegisterViewController: UIViewController {
            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
            
            let params:[String:Any] = [
-               "user":["name":name]
+               "user":["name":name, "text":text]
            ]
            
            
@@ -234,8 +247,20 @@ class RegisterView: UIView {
         let textfield: UITextField = UITextField()
         textfield.frame = CGRect(x: 20, y: _bounds.origin.y + 100, width: _bounds.width * 0.8, height: 50)
         textfield.placeholder = "名前を入力してください"
+        textfield.layer.borderWidth = 0.5
         
         return textfield
+    }()
+    
+    
+    
+    /// テキストビュー
+    lazy var textView: UITextView = {
+        let textView: UITextView = UITextView()
+        textView.frame = CGRect(x: 20, y: nameTextField.frame.origin.y + nameTextField.frame.height + 50, width: _bounds.width * 0.8, height: 100)
+        textView.layer.borderWidth = 0.5
+        
+        return textView
     }()
     
     
@@ -247,6 +272,7 @@ class RegisterView: UIView {
         super.init(frame: frame)
         
         addSubview(nameTextField)
+        addSubview(textView)
     }
     
     required init?(coder: NSCoder) {

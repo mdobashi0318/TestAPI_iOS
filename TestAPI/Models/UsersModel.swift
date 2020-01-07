@@ -15,6 +15,7 @@ class UsersModel: Unboxable {
     required init(unboxer: Unboxer) throws {
         id = try? unboxer.unbox(key: "id")
         name = try? unboxer.unbox(key: "name")
+        text = try? unboxer.unbox(key: "text")
     }
     
     
@@ -23,6 +24,9 @@ class UsersModel: Unboxable {
     
     /// 名前
     let name: String?
+    
+    /// テキスト
+    let text: String?
     
     
     // JSONをUsersModelに格納できるよう変換

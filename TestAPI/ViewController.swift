@@ -47,7 +47,7 @@ class ViewController: UITableViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(callViewWillAppear(notification:)), name: NSNotification.Name(rawValue: ViewUpdate), object: nil)
         
         tableView = UITableView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height), style: .grouped)
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(CustomCell.self, forCellReuseIdentifier: "cell")
         tableView.dataSource = self
         tableView.delegate = self
         tableView.refreshControl = refreshCtr
@@ -73,8 +73,9 @@ class ViewController: UITableViewController {
     // MARK: UITableViewDelegate, UITableViewDataSource
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "cell")!
+        let cell: CustomCell = tableView.dequeueReusableCell(withIdentifier: "cell") as! CustomCell
         cell.textLabel?.text = usersModel?[indexPath.row].name
+        cell.detailTextLabel?.text = usersModel?[indexPath.row].text
         
         return cell
     }
@@ -159,4 +160,25 @@ class ViewController: UITableViewController {
     }
     
 
+}
+
+
+
+
+
+
+// MARK: - CustomCell
+
+class CustomCell: UITableViewCell {
+    
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    
 }
