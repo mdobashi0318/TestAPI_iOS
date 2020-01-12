@@ -9,4 +9,6 @@ target 'TestAPI' do
 
   pod 'Alamofire'
   pod 'Unbox'
+  pod 'RxSwift',    '5.0.1'
+  pod 'RxCocoa',    '5.0.1'
 end

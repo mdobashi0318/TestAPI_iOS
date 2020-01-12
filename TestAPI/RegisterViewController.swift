@@ -157,6 +157,7 @@ class RegisterView: UIView {
         let textfield: UITextField = UITextField()
         textfield.frame = CGRect(x: 20, y: _bounds.origin.y + 100, width: _bounds.width * 0.8, height: 50)
         textfield.placeholder = "名前を入力してください"
+        textfield.accessibilityIdentifier = "nameTextField"
         textfield.layer.borderWidth = 0.5
         
         return textfield
@@ -169,6 +170,7 @@ class RegisterView: UIView {
         let textView: UITextView = UITextView()
         textView.frame = CGRect(x: 20, y: nameTextField.frame.origin.y + nameTextField.frame.height + 50, width: _bounds.width * 0.8, height: 100)
         textView.layer.borderWidth = 0.5
+        textView.accessibilityIdentifier = "inputTextView"
         
         return textView
     }()
