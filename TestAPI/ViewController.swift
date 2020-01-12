@@ -8,19 +8,20 @@
 
 import UIKit
 
-/// リクエストするURL
-let url = URL(string: "http://localhost:3000/api/v1/users")
 
+// MARK: - Global
 /// iOS13以降でモーダルを閉じた時にViewWillAppearを呼ぶ
 let ViewUpdate: String = "viewUpdate"
 
 
 
 
+// MARK: - ViewController
 
 class ViewController: UITableViewController {
 
     
+    // MARK: Properties
     
     /// テーブルビューを上からスワイプしたとき
     let refreshCtr = UIRefreshControl()
@@ -39,6 +40,8 @@ class ViewController: UITableViewController {
     
 
 
+    // MARK: LifeCycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -56,18 +59,27 @@ class ViewController: UITableViewController {
         
     }
     
+    
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        getrequest()
+        UsersModel.getrequest(viewController: self) { [weak self] result in self?.usersModel = result }
     }
     
     
+    
+    
+    
+    // MARK: NavigationButtonAction
     
     @objc override func rightBarAction() {
         let navigationController = UINavigationController(rootViewController: RegisterViewController())
         present(navigationController, animated: true)
     }
+    
+    
+    
     
     
     // MARK: UITableViewDelegate, UITableViewDataSource
@@ -111,46 +123,14 @@ class ViewController: UITableViewController {
         return UISwipeActionsConfiguration(actions: [edit])
     }
     
+    
     @objc func refresh(sender: UIRefreshControl) {
-        getrequest()
+        UsersModel.getrequest(viewController: self) { [weak self] result in self?.usersModel = result }
         sender.endRefreshing()
     }
     
     
     
-    
-    
-    // MARK: Request
-    
-    /// 全ユーザー名を取得する
-    func getrequest() {
-        
-        let task: URLSessionTask = URLSession.shared.dataTask(with: url!) { data, response, error in
-            
-            if let _response = response {
-                print(_response)
-            } else {
-                print("NO RESPONSE")
-            }
-            
-            do {
-                let json = try JSONSerialization.jsonObject(with: data!, options: .fragmentsAllowed) as! [Any]
-                self.usersModel = json.map { (user) -> UsersModel in
-                    print(user)
-                    return UsersModel.unboxDictionary(dictionary: user)
-                }
-            } catch {
-                AlertManager().alertAction(viewController: self, title: "Error", message: error as! String, handler: { (action) in
-                    return
-                })
-                return
-            }
-            
-        }
-        task.resume()
-        
-        
-    }
     
     
     // MARK: Notification
