@@ -35,6 +35,7 @@ class TestAPIUITests: XCTestCase {
         XCTContext.runActivity(named: "登録テスト") { _ in
             
             app.navigationBars.buttons.element(boundBy: 0).tap()
+            sleep(1)
             app.textFields["nameTextField"].tap()
             app.typeText(inputName)
             
@@ -43,7 +44,7 @@ class TestAPIUITests: XCTestCase {
             
             app.navigationBars.buttons.element(boundBy: 1).tap()
             app.alerts.buttons.element(boundBy: 0).tap()
-            sleep(1)
+            sleep(2)
             XCTAssert(app.tables.cells.firstMatch.staticTexts.element(boundBy: 0).label == inputName, "登録された名前が表示されていない")
             XCTAssert(app.tables.cells.firstMatch.staticTexts.element(boundBy: 1).label == inputText, "登録されたテキストが表示されていない")
             
@@ -61,7 +62,9 @@ class TestAPIUITests: XCTestCase {
             let inputTextUpdate = "UpdateText"
             
             app.tables.cells.firstMatch.swipeLeft()
+            sleep(1)
             app.buttons["編集"].tap()
+            sleep(1)
             app.textFields["nameTextField"].tap()
             
             for _ in 0..<inputName.count {
@@ -74,11 +77,13 @@ class TestAPIUITests: XCTestCase {
             
             app.navigationBars.buttons.element(boundBy: 1).tap()
             app.alerts.buttons.element(boundBy: 0).tap()
+            sleep(2)
             
-            XCTAssert(app.tables.cells.firstMatch.staticTexts.element(boundBy: 0).label == inputName, "更新された名前が表示されていない")
-            XCTAssert(app.tables.cells.firstMatch.staticTexts.element(boundBy: 1).label == inputText, "更新されたテキストが表示されていない")
+            XCTAssert(app.tables.cells.firstMatch.staticTexts.element(boundBy: 0).label == inputNameUpdate, "更新された名前が表示されていない")
+            XCTAssert(app.tables.cells.firstMatch.staticTexts.element(boundBy: 1).label == inputTextUpdate, "更新されたテキストが表示されていない")
             
             app.tables.cells.firstMatch.tap()
+            sleep(1)
             XCTAssert(app.textFields["nameTextField"].value as! String == inputNameUpdate, "更新された名前が表示されていない")
             XCTAssert(app.textViews["inputTextView"].value as! String == inputTextUpdate, "更新されたテキストが表示されていない")
             
