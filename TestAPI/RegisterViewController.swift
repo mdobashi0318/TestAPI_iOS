@@ -11,7 +11,7 @@ import UIKit
 
 // MARK: - RegisterViewController
 
-class RegisterViewController: UIViewController {
+class RegisterViewController: UIViewController, UIAdaptivePresentationControllerDelegate, UITextFieldDelegate, UITextViewDelegate {
     
     // MARK: Properties
     
@@ -22,6 +22,8 @@ class RegisterViewController: UIViewController {
                                               height: UIScreen.main.bounds.height)
         )
         view.backgroundColor = .white
+        view.nameTextField.delegate = self
+        view.textView.delegate = self
         
         switch mode {
         case .edit:
@@ -102,7 +104,7 @@ class RegisterViewController: UIViewController {
         }
         
         
-        guard !registerView.nameTextField.text!.isEmpty else {
+        guard !registerView.textView.text!.isEmpty else {
             AlertManager().alertAction(viewController: self,
                                        title: "", message: "テキストが入力されていません") { _ in return
             }
@@ -118,6 +120,34 @@ class RegisterViewController: UIViewController {
             UsersModel.putRequest(viewController: self, id: userModel?.id, name: name, text: text)
         }
     }
+    
+    
+    
+    
+    
+    // MARK: TextField Delegate
+    
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        if textField.text!.isEmpty && registerView.textView.text.isEmpty {
+            isModalInPresentation = false
+        } else {
+            isModalInPresentation = true
+        }
+    }
+    
+    
+    
+    
+    // MARK: TextView Delegate
+    
+    func textViewDidChange(_ textView: UITextView) {
+        if textView.text.isEmpty && registerView.nameTextField.text!.isEmpty {
+            isModalInPresentation = false
+        } else {
+            isModalInPresentation = true
+        }
+    }
+    
     
     
     
@@ -151,6 +181,11 @@ class RegisterView: UIView {
     // MARK: Properties
     
     let _bounds:CGRect = UIScreen.main.bounds
+    
+    
+    /// モーダルスワイプで閉じれないかのBool値を格納
+    private var _isModalInPresentation: Bool = false
+    
     
     /// 名前入力TextField
     lazy var nameTextField: UITextField = {

@@ -18,7 +18,7 @@ let ViewUpdate: String = "viewUpdate"
 
 // MARK: - ViewController
 
-class ViewController: UITableViewController {
+class ViewController: UITableViewController, UIAdaptivePresentationControllerDelegate {
 
     
     // MARK: Properties
@@ -38,6 +38,8 @@ class ViewController: UITableViewController {
     
     
     
+    /// 入力画面VC
+    var registerViewController: UINavigationController?
 
 
     // MARK: LifeCycle
@@ -63,7 +65,6 @@ class ViewController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         UsersModel.getrequest(viewController: self) { [weak self] result in self?.usersModel = result }
     }
     
@@ -74,10 +75,20 @@ class ViewController: UITableViewController {
     // MARK: NavigationButtonAction
     
     @objc override func rightBarAction() {
-        let navigationController = UINavigationController(rootViewController: RegisterViewController())
-        present(navigationController, animated: true)
+        let _registerViewController = RegisterViewController()
+        registerViewController = UINavigationController(rootViewController: _registerViewController)
+        registerViewController?.presentationController?.delegate = self
+        present(registerViewController!, animated: true)
     }
     
+    
+    func presentationControllerDidAttemptToDismiss(_ presentationController: UIPresentationController) {
+        AlertManager().alertAction(viewController: registerViewController!, title: nil, message: "編集途中の内容がありますが削除しますか?", closeButton: "キャンセル", handler1: { [weak self] action in
+            self?.registerViewController?.dismiss(animated: true)
+        }) { _ in
+            return
+        }
+    }
     
     
     
@@ -114,9 +125,10 @@ class ViewController: UITableViewController {
      /// 編集と削除のスワイプをセット
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
-        let edit = UIContextualAction(style: .normal, title: "編集") { _,_,_  in
-            let navigationController = UINavigationController(rootViewController: RegisterViewController(mode: .edit, userModel: self.usersModel?[indexPath.row]))
-            self.present(navigationController, animated: true)
+        let edit = UIContextualAction(style: .normal, title: "編集") { [weak self] _,_,_  in
+            self?.registerViewController = UINavigationController(rootViewController: RegisterViewController(mode: .edit, userModel: self?.usersModel?[indexPath.row]))
+            self?.registerViewController?.presentationController?.delegate = self
+            self?.present(self!.registerViewController!, animated: true)
         }
         edit.backgroundColor = .orange
         
