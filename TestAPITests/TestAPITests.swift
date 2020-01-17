@@ -9,7 +9,18 @@
 import XCTest
 @testable import TestAPI
 
-class TestAPITests: XCTestCase {
+
+
+protocol TestRegisterVCProtocol {
+    
+    /// RegisterViewControllerのinit時にmodeが反映されるかテスト
+    func test_RegisterVCInitMode()
+}
+
+
+
+
+class TestAPITests: XCTestCase, TestRegisterVCProtocol {
 
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -29,6 +40,20 @@ class TestAPITests: XCTestCase {
         self.measure {
             // Put the code you want to measure the time of here.
         }
+    }
+    
+    
+    /// RegisterViewController
+    func test_RegisterVCInitMode() {
+        var vc = RegisterViewController()
+        XCTAssertEqual(vc.mode, .add, "Modeが違う")
+        
+        vc = RegisterViewController(mode: .detail, userModel: nil)
+        XCTAssertEqual(vc.mode, .detail, "Modeが違う")
+        
+        vc = RegisterViewController(mode: .edit, userModel: nil)
+        XCTAssertEqual(vc.mode, .edit, "Modeが違う")
+        
     }
 
 }

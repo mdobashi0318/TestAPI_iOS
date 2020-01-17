@@ -15,7 +15,7 @@ class RegisterViewController: UIViewController, UIAdaptivePresentationController
     
     // MARK: Properties
     
-    lazy var registerView: RegisterView = {
+    private lazy var registerView: RegisterView = {
         let view = RegisterView(frame: CGRect(x: 0,
                                               y: 0,
                                               width: UIScreen.main.bounds.width,
@@ -47,7 +47,7 @@ class RegisterViewController: UIViewController, UIAdaptivePresentationController
     private var userModel: UsersModel?
     
     
-    private var mode: Mode = .add
+    private(set) var mode: Mode = .add
     
     
     
@@ -181,11 +181,6 @@ class RegisterView: UIView {
     // MARK: Properties
     
     let _bounds:CGRect = UIScreen.main.bounds
-    
-    
-    /// モーダルスワイプで閉じれないかのBool値を格納
-    private var _isModalInPresentation: Bool = false
-    
     
     /// 名前入力TextField
     lazy var nameTextField: UITextField = {
