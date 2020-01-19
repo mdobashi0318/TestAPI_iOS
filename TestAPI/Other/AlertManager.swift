@@ -26,7 +26,7 @@ class AlertManager {
     
     
     /// 「削除」、「閉じる」が付いたアラート
-    func alertAction(viewController:UIViewController, title: String?, message: String,  deleteButton: String = "削除", closeButton: String = "閉じる", handler1: @escaping (UIAlertAction)->(),handler2: @escaping (UIAlertAction) -> ()){
+    func alertDeleteAction(viewController:UIViewController, title: String?, message: String,  deleteButton: String = "削除", closeButton: String = "閉じる", handler1: @escaping (UIAlertAction)->(),handler2: @escaping (UIAlertAction) -> ()){
         let controller:UIAlertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
         controller.addAction(UIAlertAction(title: deleteButton,
@@ -40,4 +40,23 @@ class AlertManager {
         )
         viewController.present(controller, animated: true, completion: nil)
     }
+    
+    
+    
+    /// 「はい」、「いいえ」が付いたアラート
+    func alertAction(viewController:UIViewController, title: String?, message: String, handler1: @escaping (UIAlertAction)->(),handler2: @escaping (UIAlertAction) -> ()){
+        let controller:UIAlertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        
+        controller.addAction(UIAlertAction(title: "はい",
+                                           style: .default,
+                                           handler: handler1)
+        )
+        
+        controller.addAction(UIAlertAction(title: "いいえ",
+                                           style: .cancel,
+                                           handler: handler2)
+        )
+        viewController.present(controller, animated: true, completion: nil)
+    }
+     
 }

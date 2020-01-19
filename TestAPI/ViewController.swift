@@ -65,7 +65,7 @@ class ViewController: UITableViewController, UIAdaptivePresentationControllerDel
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        UsersModel.getrequest(viewController: self) { [weak self] result in self?.usersModel = result }
+        UsersModel.fetchUsers(viewController: self) { [weak self] result in self?.usersModel = result }
     }
     
     
@@ -83,7 +83,7 @@ class ViewController: UITableViewController, UIAdaptivePresentationControllerDel
     
     
     func presentationControllerDidAttemptToDismiss(_ presentationController: UIPresentationController) {
-        AlertManager().alertAction(viewController: registerViewController!, title: nil, message: "編集途中の内容がありますが削除しますか?", closeButton: "キャンセル", handler1: { [weak self] action in
+        AlertManager().alertDeleteAction(viewController: registerViewController!, title: nil, message: "編集途中の内容がありますが削除しますか?", closeButton: "キャンセル", handler1: { [weak self] action in
             self?.registerViewController?.dismiss(animated: true)
         }) { _ in
             return
@@ -137,7 +137,7 @@ class ViewController: UITableViewController, UIAdaptivePresentationControllerDel
     
     
     @objc func refresh(sender: UIRefreshControl) {
-        UsersModel.getrequest(viewController: self) { [weak self] result in self?.usersModel = result }
+        UsersModel.fetchUsers(viewController: self) { [weak self] result in self?.usersModel = result }
         sender.endRefreshing()
     }
     

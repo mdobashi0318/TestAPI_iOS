@@ -8,20 +8,15 @@
 
 
 import Unbox
+import Alamofire
 
 
 class UsersModel: Unboxable {
     
+    // MARK: Properties
     
     /// リクエストするURL
     private static let url = URL(string: "http://localhost:3000/api/v1/users")
-        
-    required init(unboxer: Unboxer) throws {
-        id = try? unboxer.unbox(key: "id")
-        name = try? unboxer.unbox(key: "name")
-        text = try? unboxer.unbox(key: "text")
-    }
-    
     
     /// ID
     let id: String?
@@ -31,7 +26,22 @@ class UsersModel: Unboxable {
     
     /// テキスト
     let text: String?
+        
     
+    
+    
+    // MARK: Init
+    
+    required init(unboxer: Unboxer) throws {
+        id = try? unboxer.unbox(key: "id")
+        name = try? unboxer.unbox(key: "name")
+        text = try? unboxer.unbox(key: "text")
+    }
+    
+    
+    
+    
+    // MARK: Class Func
     
     // JSONをUsersModelに格納できるよう変換
     class func unboxDictionary(dictionary: Any) -> UsersModel {
@@ -41,42 +51,47 @@ class UsersModel: Unboxable {
     
     
     
-    
     // MARK: Request
-    
-
     
     /// 全ユーザー名を取得する
     /// - Parameters:
     ///   - viewController: 呼び出し元のVIewController
     ///   - callBask: getしたものを返す
-    class func getrequest(viewController: UIViewController, callBask: @escaping([UsersModel])->()) {
+    class func fetchUsers(viewController: UIViewController, callBask: @escaping([UsersModel])->()) {
         
         var usersModel = [UsersModel]()
         
-        let task: URLSessionTask = URLSession.shared.dataTask(with: url!) { data, response, error in
-            
-            if let _response = response {
-                print(_response)
-            } else {
-                print("NO RESPONSE")
+        Alamofire.request(url!, method: .get, headers: .none).response { response in
+          
+            guard response.error == nil else {
+                AlertManager().alertAction(viewController: viewController, title: "接続に失敗しました", message: "再度接続しますか?", handler1: { action in
+                    self.fetchUsers(viewController: viewController) { _ in }
+                    
+                }) { _ in }
+                return
             }
+        
             
             do {
-                let json = try JSONSerialization.jsonObject(with: data!, options: .fragmentsAllowed) as! [Any]
-                usersModel = json.map { (user) -> UsersModel in
-                    print(user)
+                let json = try JSONSerialization.jsonObject(with: response.data!, options: .fragmentsAllowed) as! [Any]
+                usersModel = json.map { user -> UsersModel in
+                    
+                    print("user = \(user)")
+                    
+                    
                     return UsersModel.unboxDictionary(dictionary: user)
                 }
             } catch {
-                AlertManager().alertAction(viewController: viewController, title: "Error", message: error as! String, handler: { (action) in
+                AlertManager().alertAction(viewController: viewController, title: "Error", message: "", handler: { (action) in
                     return
                 })
                 return
             }
+            
+            responsePrint(response)
+            
             callBask(usersModel)
         }
-        task.resume()
         
     }
     
@@ -91,39 +106,31 @@ class UsersModel: Unboxable {
     ///   - name: 登録する名前
     ///   - text: 登録するテキスト
     class func postRequest(viewController: UIViewController, name: String, text: String) {
-        var request = URLRequest(url: url!)
-        request.httpMethod = "POST"
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
         let params:[String:Any] = [
             "user":["name":name, "text":text]
         ]
         
         
-        do {
-            request.httpBody = try JSONSerialization.data(withJSONObject: params, options: .fragmentsAllowed)
-            let task:URLSessionDataTask = URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
-                print("data")
-                print(data!)
-                print("respnse")
-                print(response!)
-                
-            })
-            task.resume()
+        Alamofire.request(url!, method: .post, parameters: params).response { response in
+            
+            guard response.error == nil else {
+                AlertManager().alertAction(viewController: viewController, title: "接続に失敗しました", message: "再度接続しますか?", handler1: { action in
+                    self.postRequest(viewController: viewController, name: name, text: text)
+                    
+                }) { _ in }
+                return
+            }
+            
             
             AlertManager().alertAction(viewController: viewController,
-                                       title: "", message: "名前を保存しました") { _ in
+                                       title: "", message: "ユーザを保存しました") { _ in
                                         viewController.dismiss(animated: true) {
                                             NotificationCenter.default.post(name: Notification.Name(ViewUpdate), object: nil)
                                         }
             }
+            responsePrint(response)
             
-        } catch {
-            AlertManager().alertAction(viewController: viewController,
-                                       title: "", message: "エラーが発生しました") { _ in return
-                                        
-            }
-            return
         }
         
     }
@@ -138,49 +145,65 @@ class UsersModel: Unboxable {
     ///   - text: 変更するテキスト
     class func putRequest(viewController: UIViewController, id: String?, name: String, text: String) {
         
-        guard let id = id else {
+        guard let _id = id else {
             print("idの取得に失敗")
             return
         }
         
-        let acccesURL = URL(string: String("\(url!)/\(id)"))
-           var request = URLRequest(url: acccesURL!)
-           request.httpMethod = "PUT"
-           request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-           
-           let params:[String:Any] = [
-               "user":["name":name, "text":text]
-           ]
-           
-           
-           do {
-               request.httpBody = try JSONSerialization.data(withJSONObject: params, options: .fragmentsAllowed)
-               let task:URLSessionDataTask = URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
-                   print("data")
-                   print(data!)
-                   print("respnse")
-                   print(response!)
-                   
-               })
-               task.resume()
+        let acccesURL = URL(string: String("\(url!)/\(_id)"))
+        
+        let params:[String:Any] = [
+            "user":["name":name, "text":text]
+        ]
+        
+        
+        
+        Alamofire.request(acccesURL!, method: .put, parameters: params).response { response in
+            
+            guard response.error == nil else {
+                AlertManager().alertAction(viewController: viewController, title: "接続に失敗しました", message: "再度接続しますか?", handler1: { action in
+                    self.putRequest(viewController: viewController, id: _id, name: name, text: text)
+                    
+                }) { _ in }
+                return
+            }
+            
             
             AlertManager().alertAction(viewController: viewController,
-                                             title: "", message: "名前を更新しました") { _ in
-                                              viewController.dismiss(animated: true) {
-                                                  NotificationCenter.default.post(name: Notification.Name(ViewUpdate), object: nil)
-                                              }
-                  }
-           } catch {
-               AlertManager().alertAction(viewController: viewController,
-                                          title: "", message: "エラーが発生しました") { _ in return
-                                           
-               }
-               return
-           }
-       }
-
+                                       title: "", message: "ユーザを更新しました") { _ in
+                                        viewController.dismiss(animated: true) {
+                                            NotificationCenter.default.post(name: Notification.Name(ViewUpdate), object: nil)
+                                        }
+            }
+            responsePrint(response)
+            
+        }
+    }
     
-
+    
+    
+    
+    
+    // MARK: Print
+    
+    fileprivate class func responsePrint(_ response:DefaultDataResponse?) {
+        
+        #if DEBUG
+        if let _response = response {
+            print(" --------- \(String(describing: _response.response!.url!)) \(String(describing: _response.request!.httpMethod!)) response Start --------- ")
+            print(_response.response!)
+            print(" --------- \(String(describing: _response.response!.url!)) \(String(describing: _response.request!.httpMethod!)) response End --------- ")
+        } else {
+            print("NO Response")
+        }
+        #endif
+        
+    }
+    
+    
+    
+    
+    
     
     
 }
