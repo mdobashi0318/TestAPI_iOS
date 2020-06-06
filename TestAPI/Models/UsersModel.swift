@@ -57,17 +57,14 @@ class UsersModel: Unboxable {
     /// - Parameters:
     ///   - viewController: 呼び出し元のVIewController
     ///   - callBask: getしたものを返す
-    class func fetchUsers(viewController: UIViewController, callBask: @escaping([UsersModel])->()) {
+    class func fetchUsers(viewController: UIViewController, callBack: @escaping([UsersModel], AFError?) -> ()) {
         
         var usersModel = [UsersModel]()
         
-        Alamofire.request(url!, method: .get, headers: .none).response { response in
+        AF.request(url!, method: .get, headers: .none).response { response in
           
             guard response.error == nil else {
-                AlertManager().alertAction(viewController: viewController, title: "接続に失敗しました", message: "再度接続しますか?", handler1: { action in
-                    self.fetchUsers(viewController: viewController) { _ in }
-                    
-                }) { _ in }
+                callBack(usersModel, response.error)
                 return
             }
         
@@ -90,7 +87,7 @@ class UsersModel: Unboxable {
             
             responsePrint(response)
             
-            callBask(usersModel)
+            callBack(usersModel, response.error)
         }
         
     }
@@ -105,26 +102,24 @@ class UsersModel: Unboxable {
     ///   - viewController: 呼び出し元のVIewController
     ///   - name: 登録する名前
     ///   - text: 登録するテキスト
-    class func postRequest(viewController: UIViewController, name: String, text: String) {
+    class func postRequest(viewController: UIViewController, name: String, text: String, callBack: @escaping(AFError?) -> ()) {
         
         let params:[String:Any] = [
             "user":["name":name, "text":text]
         ]
         
         
-        Alamofire.request(url!, method: .post, parameters: params).response { response in
+        AF.request(url!, method: .post, parameters: params).response { response in
             
             guard response.error == nil else {
-                AlertManager().alertAction(viewController: viewController, title: "接続に失敗しました", message: "再度接続しますか?", handler1: { action in
-                    self.postRequest(viewController: viewController, name: name, text: text)
-                    
-                }) { _ in }
+                callBack(response.error!)
+                
                 return
             }
             
             
             AlertManager().alertAction(viewController: viewController,
-                                       title: "", message: "ユーザを保存しました") { _ in
+                                       title:"", message: "ユーザを保存しました") { _ in
                                         viewController.dismiss(animated: true) {
                                             NotificationCenter.default.post(name: Notification.Name(ViewUpdate), object: nil)
                                         }
@@ -143,7 +138,7 @@ class UsersModel: Unboxable {
     ///   - id: ID
     ///   - name: 変更する名前
     ///   - text: 変更するテキスト
-    class func putRequest(viewController: UIViewController, id: String?, name: String, text: String) {
+    class func putRequest(viewController: UIViewController, id: String?, name: String, text: String, callBack: @escaping(AFError?) -> ()) {
         
         guard let _id = id else {
             print("idの取得に失敗")
@@ -158,13 +153,11 @@ class UsersModel: Unboxable {
         
         
         
-        Alamofire.request(acccesURL!, method: .put, parameters: params).response { response in
+        AF.request(acccesURL!, method: .put, parameters: params).response { response in
             
             guard response.error == nil else {
-                AlertManager().alertAction(viewController: viewController, title: "接続に失敗しました", message: "再度接続しますか?", handler1: { action in
-                    self.putRequest(viewController: viewController, id: _id, name: name, text: text)
-                    
-                }) { _ in }
+                callBack(response.error)
+                
                 return
             }
             
@@ -186,7 +179,7 @@ class UsersModel: Unboxable {
     
     // MARK: Print
     
-    fileprivate class func responsePrint(_ response:DefaultDataResponse?) {
+    fileprivate class func responsePrint(_ response:AFDataResponse<Data?>?) {
         
         #if DEBUG
         if let _response = response {

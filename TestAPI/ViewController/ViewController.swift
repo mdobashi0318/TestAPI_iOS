@@ -65,10 +65,27 @@ class ViewController: UITableViewController, UIAdaptivePresentationControllerDel
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        UsersModel.fetchUsers(viewController: self) { [weak self] result in self?.usersModel = result }
+        fetchUsers()
     }
     
     
+    
+    // MARK: Request
+    
+    /// 全ユーザー名を取得する
+    private func fetchUsers() {
+        UsersModel.fetchUsers(viewController: self) { [weak self] result, error in
+            if error != nil {
+                AlertManager().alertAction(viewController: self!, title: "接続に失敗しました", message: "再度接続しますか?", handler1: { action in
+                    self?.fetchUsers()
+                    
+                }) { _ in }
+                
+            }
+            self?.usersModel = result
+            
+        }
+    }
     
     
     
@@ -137,7 +154,7 @@ class ViewController: UITableViewController, UIAdaptivePresentationControllerDel
     
     
     @objc func refresh(sender: UIRefreshControl) {
-        UsersModel.fetchUsers(viewController: self) { [weak self] result in self?.usersModel = result }
+        fetchUsers()
         sender.endRefreshing()
     }
     
@@ -148,7 +165,7 @@ class ViewController: UITableViewController, UIAdaptivePresentationControllerDel
     // MARK: Notification
 
     @objc func callViewWillAppear(notification: Notification) {
-        self.viewWillAppear(true)
+        fetchUsers()
     }
     
 
