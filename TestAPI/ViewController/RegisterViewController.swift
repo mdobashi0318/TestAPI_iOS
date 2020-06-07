@@ -115,13 +115,45 @@ class RegisterViewController: UIViewController, UIAdaptivePresentationController
         let text: String = registerView.textView.text!
         
         if mode == .add {
-            UsersModel.postRequest(viewController: self, name: name, text: text)
+            postRequest(name: name, text: text)
+            
         } else if mode == .edit {
-            UsersModel.putRequest(viewController: self, id: userModel?.id, name: name, text: text)
+            putRequest(name: name, text: text)
+            
         }
     }
     
     
+    
+    // MARK: Request
+    
+    /// ユーザー名を作成する
+    private func postRequest(name: String, text: String) {
+        UsersModel.postRequest(viewController: self, name: name, text: text) { [weak self] error in
+            if error != nil {
+                AlertManager().alertAction(viewController: self!, title: "接続に失敗しました", message: "再度接続しますか?", handler1: { action in
+                    self?.postRequest(name: name, text: text)
+                    
+                }) { _ in }
+                
+            }
+        }
+    }
+    
+    
+    
+    /// ユーザー名を更新する
+    private func putRequest(name: String, text: String) {
+        UsersModel.putRequest(viewController: self, id: userModel?.id, name: name, text: text) { [weak self] error in
+            if error != nil {
+                AlertManager().alertAction(viewController: self!, title: "接続に失敗しました", message: "再度接続しますか?", handler1: { action in
+                    self?.putRequest(name: name, text: text)
+                    
+                }) { _ in }
+                
+            }
+        }
+    }
     
     
     

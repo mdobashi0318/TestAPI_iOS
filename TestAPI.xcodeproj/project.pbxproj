@@ -118,6 +118,15 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		D09E6B90248BE264002962E4 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				D0C3411423BF07C200507377 /* ViewController.swift */,
+				D0D6AC6523C1B6C500968258 /* RegisterViewController.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
 		D0C3410423BF07C200507377 = {
 			isa = PBXGroup;
 			children = (
@@ -144,10 +153,9 @@
 			isa = PBXGroup;
 			children = (
 				D0C3411E23BF07C600507377 /* Info.plist */,
-				D056939D23C34A1700149670 /* Models */,
 				D0C3411023BF07C200507377 /* AppDelegate.swift */,
-				D0C3411423BF07C200507377 /* ViewController.swift */,
-				D0D6AC6523C1B6C500968258 /* RegisterViewController.swift */,
+				D056939D23C34A1700149670 /* Models */,
+				D09E6B90248BE264002962E4 /* ViewController */,
 				D0D6AC6723C1E52B00968258 /* Extensions */,
 				D034E45F23C0C43300610425 /* Other */,
 				D0C3411923BF07C600507377 /* Assets.xcassets */,
