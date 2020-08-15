@@ -50,11 +50,16 @@ class RegisterViewController: UIViewController, UIAdaptivePresentationController
     private(set) var mode: Mode = .add
     
     
+    var presenter: RegisterViewControllerPresenter?
+    
+    
     
     // MARK: Init
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        
+        presenter = RegisterViewControllerPresenter()
     }
     
     
@@ -111,14 +116,11 @@ class RegisterViewController: UIViewController, UIAdaptivePresentationController
             return
         }
         
-        let name: String = registerView.nameTextField.text!
-        let text: String = registerView.textView.text!
-        
         if mode == .add {
-            postRequest(name: name, text: text)
+            post()
             
         } else if mode == .edit {
-            putRequest(name: name, text: text)
+            put()
             
         }
     }
@@ -127,34 +129,50 @@ class RegisterViewController: UIViewController, UIAdaptivePresentationController
     
     // MARK: Request
     
-    /// ユーザー名を作成する
-    private func postRequest(name: String, text: String) {
-        UsersModel.postRequest(viewController: self, name: name, text: text) { [weak self] error in
-            if error != nil {
-                AlertManager().alertAction(viewController: self!, title: "接続に失敗しました", message: "再度接続しますか?", handler1: { action in
-                    self?.postRequest(name: name, text: text)
-                    
-                }) { _ in }
-                
+    
+    
+    func post() {
+        presenter?.postRequest(name: registerView.nameTextField.text!, text: registerView.textView.text!, success: {
+            
+            AlertManager().alertAction(viewController: self,
+                                       title:"", message: "ユーザを保存しました") { _ in
+                                        self.dismiss(animated: true) {
+                                            NotificationCenter.default.post(name: Notification.Name(ViewUpdate), object: nil)
+                                        }
             }
+            
+        }) { _ in
+            AlertManager().alertAction(viewController: self,
+                                       title: "接続に失敗しました",
+                                       message: "再度接続しますか?",
+                                       handler1: { action in
+                                        
+            }) { _ in }
         }
     }
     
     
     
-    /// ユーザー名を更新する
-    private func putRequest(name: String, text: String) {
-        UsersModel.putRequest(viewController: self, id: userModel?.id, name: name, text: text) { [weak self] error in
-            if error != nil {
-                AlertManager().alertAction(viewController: self!, title: "接続に失敗しました", message: "再度接続しますか?", handler1: { action in
-                    self?.putRequest(name: name, text: text)
-                    
-                }) { _ in }
-                
+    func put() {
+        presenter?.putRequest(id: self.userModel?.id, name: registerView.nameTextField.text!, text: registerView.textView.text!, success: {
+            
+            AlertManager().alertAction(viewController: self,
+                                       title: "", message: "ユーザを更新しました") { _ in
+                                        self.dismiss(animated: true) {
+                                            NotificationCenter.default.post(name: Notification.Name(ViewUpdate), object: nil)
+                                        }
             }
+            
+            
+        }) { _ in
+            AlertManager().alertAction(viewController: self,
+                                       title: "接続に失敗しました",
+                                       message: "再度接続しますか?",
+                                       handler1: { action in
+                                        
+            }) { _ in }
         }
     }
-    
     
     
     // MARK: TextField Delegate

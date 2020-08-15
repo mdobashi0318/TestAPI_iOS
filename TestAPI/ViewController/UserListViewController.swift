@@ -18,7 +18,7 @@ let ViewUpdate: String = "viewUpdate"
 
 // MARK: - ViewController
 
-class ViewController: UITableViewController, UIAdaptivePresentationControllerDelegate {
+class UserListViewController: UITableViewController, UIAdaptivePresentationControllerDelegate {
 
     
     // MARK: Properties
@@ -28,14 +28,16 @@ class ViewController: UITableViewController, UIAdaptivePresentationControllerDel
     
     
     /// ユーザー名を格納
-    var usersModel: [UsersModel]? {
-        didSet {
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-        }
-    }
+//    var usersModel: [UsersModel]? {
+//        didSet {
+//            DispatchQueue.main.async {
+//                self.tableView.reloadData()
+//            }
+//        }
+//    }
     
+    
+    var presenter: UserListViewControllerPresenter?
     
     
     /// 入力画面VC
@@ -48,6 +50,8 @@ class ViewController: UITableViewController, UIAdaptivePresentationControllerDel
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
+        presenter = UserListViewControllerPresenter()
+        
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(rightBarAction))
         NotificationCenter.default.addObserver(self, selector: #selector(callViewWillAppear(notification:)), name: NSNotification.Name(rawValue: ViewUpdate), object: nil)
         
@@ -56,7 +60,7 @@ class ViewController: UITableViewController, UIAdaptivePresentationControllerDel
         tableView.dataSource = self
         tableView.delegate = self
         tableView.refreshControl = refreshCtr
-        refreshCtr.addTarget(self, action: #selector(ViewController.refresh(sender:)), for: .valueChanged)
+        refreshCtr.addTarget(self, action: #selector(UserListViewController.refresh(sender:)), for: .valueChanged)
 
         
     }
@@ -65,29 +69,25 @@ class ViewController: UITableViewController, UIAdaptivePresentationControllerDel
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        fetchUsers()
+        
+        fetch()
     }
     
     
     
     // MARK: Request
     
-    /// 全ユーザー名を取得する
-    private func fetchUsers() {
-        UsersModel.fetchUsers(viewController: self) { [weak self] result, error in
-            if error != nil {
-                AlertManager().alertAction(viewController: self!, title: "接続に失敗しました", message: "再度接続しますか?", handler1: { action in
-                    self?.fetchUsers()
-                    
-                }) { _ in }
-                
+    func fetch() {
+        presenter?.fetchUsers(success: {
+            self.tableView.reloadData()
+        }) { error in
+            AlertManager().alertAction(viewController: self, title: error, message: "", handler1: {_ in
+                self.fetch()
+            }) { _ in
+                print("")
             }
-            self?.usersModel = result
-            
         }
     }
-    
-    
     
     // MARK: NavigationButtonAction
     
@@ -114,25 +114,25 @@ class ViewController: UITableViewController, UIAdaptivePresentationControllerDel
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: CustomCell = tableView.dequeueReusableCell(withIdentifier: "cell") as! CustomCell
-        cell.textLabel?.text = usersModel?[indexPath.row].name
-        cell.detailTextLabel?.text = usersModel?[indexPath.row].text
+        cell.textLabel?.text = presenter?.model?[indexPath.row].name
+        cell.detailTextLabel?.text = presenter?.model?[indexPath.row].text
         
         return cell
     }
     
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        navigationController?.pushViewController(RegisterViewController(mode: .detail, userModel: usersModel?[indexPath.row]), animated: true)
+        navigationController?.pushViewController(RegisterViewController(mode: .detail, userModel: presenter?.model?[indexPath.row]), animated: true)
     }
     
     
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if usersModel == nil {
+        if presenter?.model == nil {
             return 1
         }
         
-        return usersModel!.count
+        return (presenter?.model!.count)!
     }
     
     
@@ -143,7 +143,7 @@ class ViewController: UITableViewController, UIAdaptivePresentationControllerDel
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         let edit = UIContextualAction(style: .normal, title: "編集") { [weak self] _,_,_  in
-            self?.registerViewController = UINavigationController(rootViewController: RegisterViewController(mode: .edit, userModel: self?.usersModel?[indexPath.row]))
+            self?.registerViewController = UINavigationController(rootViewController: RegisterViewController(mode: .edit, userModel: self?.presenter?.model?[indexPath.row]))
             self?.registerViewController?.presentationController?.delegate = self
             self?.present(self!.registerViewController!, animated: true)
         }
@@ -154,7 +154,7 @@ class ViewController: UITableViewController, UIAdaptivePresentationControllerDel
     
     
     @objc func refresh(sender: UIRefreshControl) {
-        fetchUsers()
+        fetch()
         sender.endRefreshing()
     }
     
@@ -165,7 +165,7 @@ class ViewController: UITableViewController, UIAdaptivePresentationControllerDel
     // MARK: Notification
 
     @objc func callViewWillAppear(notification: Notification) {
-        fetchUsers()
+        fetch()
     }
     
 
