@@ -20,6 +20,8 @@
 		D0C3413323BF07C600507377 /* TestAPIUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C3413223BF07C600507377 /* TestAPIUITests.swift */; };
 		D0D6AC6623C1B6C500968258 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0D6AC6523C1B6C500968258 /* RegisterViewController.swift */; };
 		D0D6AC6923C1E56700968258 /* ViewControllerExtennsion.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0D6AC6823C1E56700968258 /* ViewControllerExtennsion.swift */; };
+		D0F50EAC24E8E64B00F74D20 /* UserListViewControllerPresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F50EAB24E8E64B00F74D20 /* UserListViewControllerPresenterTests.swift */; };
+		D0F50EAE24E90C9A00F74D20 /* RegisterViewControllerPresenterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F50EAD24E90C9A00F74D20 /* RegisterViewControllerPresenterTest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +63,8 @@
 		D0C3413423BF07C600507377 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D0D6AC6523C1B6C500968258 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		D0D6AC6823C1E56700968258 /* ViewControllerExtennsion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerExtennsion.swift; sourceTree = "<group>"; };
+		D0F50EAB24E8E64B00F74D20 /* UserListViewControllerPresenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListViewControllerPresenterTests.swift; sourceTree = "<group>"; };
+		D0F50EAD24E90C9A00F74D20 /* RegisterViewControllerPresenterTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewControllerPresenterTest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -182,6 +186,8 @@
 			isa = PBXGroup;
 			children = (
 				D0C3412723BF07C600507377 /* TestAPITests.swift */,
+				D0F50EAB24E8E64B00F74D20 /* UserListViewControllerPresenterTests.swift */,
+				D0F50EAD24E90C9A00F74D20 /* RegisterViewControllerPresenterTest.swift */,
 				D0C3412923BF07C600507377 /* Info.plist */,
 			);
 			path = TestAPITests;
@@ -393,6 +399,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D0F50EAC24E8E64B00F74D20 /* UserListViewControllerPresenterTests.swift in Sources */,
+				D0F50EAE24E90C9A00F74D20 /* RegisterViewControllerPresenterTest.swift in Sources */,
 				D0C3412823BF07C600507377 /* TestAPITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
