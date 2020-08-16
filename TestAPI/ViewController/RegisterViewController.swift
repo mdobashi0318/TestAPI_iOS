@@ -11,7 +11,19 @@ import UIKit
 
 // MARK: - RegisterViewController
 
-class RegisterViewController: UIViewController, UIAdaptivePresentationControllerDelegate, UITextFieldDelegate, UITextViewDelegate {
+protocol RegisterViewControllerProtocol {
+    /// ユーザを登録する
+    func postUser()
+    
+    /// ユーザを更新する
+    func putUser()
+}
+
+
+
+// MARK: - RegisterViewController
+
+class RegisterViewController: UIViewController {
     
     // MARK: Properties
     
@@ -49,8 +61,8 @@ class RegisterViewController: UIViewController, UIAdaptivePresentationController
     
     private(set) var mode: Mode = .add
     
-    
-    var presenter: RegisterViewControllerPresenter?
+    /// プレゼンター
+    private var presenter: RegisterViewControllerPresenter?
     
     
     
@@ -117,21 +129,33 @@ class RegisterViewController: UIViewController, UIAdaptivePresentationController
         }
         
         if mode == .add {
-            post()
+            postUser()
             
         } else if mode == .edit {
-            put()
+            putUser()
             
         }
     }
     
+
     
+    // MARK: Mode Enum
     
-    // MARK: Request
+    enum Mode {
+        case add, edit, detail
+    }
     
+}
+
+
+
+
+
+// MARK: - RegisterViewControllerPresenterProtocol
+
+extension RegisterViewController: RegisterViewControllerProtocol {
     
-    
-    func post() {
+    func postUser() {
         presenter?.postRequest(name: registerView.nameTextField.text!, text: registerView.textView.text!, success: {
             
             AlertManager().alertAction(viewController: self,
@@ -152,8 +176,7 @@ class RegisterViewController: UIViewController, UIAdaptivePresentationController
     }
     
     
-    
-    func put() {
+    func putUser() {
         presenter?.putRequest(id: self.userModel?.id, name: registerView.nameTextField.text!, text: registerView.textView.text!, success: {
             
             AlertManager().alertAction(viewController: self,
@@ -174,6 +197,15 @@ class RegisterViewController: UIViewController, UIAdaptivePresentationController
         }
     }
     
+    
+}
+
+
+
+
+// MARK: - TextField Delegate, TextView Delegate
+
+extension RegisterViewController: UITextFieldDelegate, UITextViewDelegate {
     
     // MARK: TextField Delegate
     
@@ -198,28 +230,7 @@ class RegisterViewController: UIViewController, UIAdaptivePresentationController
         }
     }
     
-    
-    
-    
-    // MARK: Mode Enum
-    
-    enum Mode {
-        case add, edit, detail
-    }
-    
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
