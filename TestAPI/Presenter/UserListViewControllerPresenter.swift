@@ -9,7 +9,7 @@
 import Foundation
 
 
-class UserListViewControllerPresenter {
+final class UserListViewControllerPresenter {
     
     private(set) var model: [UsersModel]?
     

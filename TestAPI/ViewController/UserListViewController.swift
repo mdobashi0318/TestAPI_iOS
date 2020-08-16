@@ -15,33 +15,29 @@ let ViewUpdate: String = "viewUpdate"
 
 
 
+// MARK: - UserListViewControllerProtocol
 
-// MARK: - ViewController
+protocol UserListViewControllerProtocol {
+    /// ユーザ全件検索
+    func fetchUsers()
+}
 
-class UserListViewController: UITableViewController, UIAdaptivePresentationControllerDelegate {
+
+// MARK: - UserListViewController
+
+class UserListViewController: UITableViewController {
 
     
     // MARK: Properties
     
     /// テーブルビューを上からスワイプしたとき
-    let refreshCtr = UIRefreshControl()
-    
-    
-    /// ユーザー名を格納
-//    var usersModel: [UsersModel]? {
-//        didSet {
-//            DispatchQueue.main.async {
-//                self.tableView.reloadData()
-//            }
-//        }
-//    }
-    
-    
-    var presenter: UserListViewControllerPresenter?
-    
+    private let refreshCtr = UIRefreshControl()
+        
+    /// プレゼンター
+    private var presenter: UserListViewControllerPresenter?
     
     /// 入力画面VC
-    var registerViewController: UINavigationController?
+    private var registerViewController: UINavigationController?
 
 
     // MARK: LifeCycle
@@ -62,7 +58,6 @@ class UserListViewController: UITableViewController, UIAdaptivePresentationContr
         tableView.refreshControl = refreshCtr
         refreshCtr.addTarget(self, action: #selector(UserListViewController.refresh(sender:)), for: .valueChanged)
 
-        
     }
     
     
@@ -70,24 +65,10 @@ class UserListViewController: UITableViewController, UIAdaptivePresentationContr
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        fetch()
+        fetchUsers()
     }
     
     
-    
-    // MARK: Request
-    
-    func fetch() {
-        presenter?.fetchUsers(success: {
-            self.tableView.reloadData()
-        }) { error in
-            AlertManager().alertAction(viewController: self, title: error, message: "", handler1: {_ in
-                self.fetch()
-            }) { _ in
-                print("")
-            }
-        }
-    }
     
     // MARK: NavigationButtonAction
     
@@ -99,18 +80,33 @@ class UserListViewController: UITableViewController, UIAdaptivePresentationContr
     }
     
     
-    func presentationControllerDidAttemptToDismiss(_ presentationController: UIPresentationController) {
-        AlertManager().alertDeleteAction(viewController: registerViewController!, title: nil, message: "編集途中の内容がありますが削除しますか?", closeButton: "キャンセル", handler1: { [weak self] action in
-            self?.registerViewController?.dismiss(animated: true)
-        }) { _ in
-            return
-        }
+    
+
+    @objc func refresh(sender: UIRefreshControl) {
+        fetchUsers()
+        sender.endRefreshing()
     }
     
     
     
     
-    // MARK: UITableViewDelegate, UITableViewDataSource
+    
+    // MARK: Notification
+
+    @objc func callViewWillAppear(notification: Notification) {
+        fetchUsers()
+    }
+    
+
+}
+
+
+
+
+
+// MARK: - UITableViewDelegate, UITableViewDataSource
+
+extension UserListViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: CustomCell = tableView.dequeueReusableCell(withIdentifier: "cell") as! CustomCell
@@ -119,6 +115,7 @@ class UserListViewController: UITableViewController, UIAdaptivePresentationContr
         
         return cell
     }
+    
     
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -137,8 +134,6 @@ class UserListViewController: UITableViewController, UIAdaptivePresentationContr
     
     
     
-    
-    
      /// 編集と削除のスワイプをセット
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
@@ -152,25 +147,52 @@ class UserListViewController: UITableViewController, UIAdaptivePresentationContr
         return UISwipeActionsConfiguration(actions: [edit])
     }
     
-    
-    @objc func refresh(sender: UIRefreshControl) {
-        fetch()
-        sender.endRefreshing()
-    }
-    
-    
-    
-    
-    
-    // MARK: Notification
-
-    @objc func callViewWillAppear(notification: Notification) {
-        fetch()
-    }
-    
-
 }
 
+
+
+
+
+// MARK: - UserListViewControllerPresenterProtocol
+
+extension UserListViewController: UIAdaptivePresentationControllerDelegate {
+    
+    /// 編集中にモーダルを閉じようとした時に確認アラートを表示する
+    func presentationControllerDidAttemptToDismiss(_ presentationController: UIPresentationController) {
+        AlertManager().alertDeleteAction(viewController: registerViewController!,
+                                         title: nil,
+                                         message: "編集途中の内容がありますが削除しますか?",
+                                         closeButton: "キャンセル",
+                                         handler1: { [weak self] action in
+                                            self?.registerViewController?.dismiss(animated: true)
+        }) { _ in
+            return
+        }
+    }
+    
+    
+}
+
+
+
+
+
+// MARK: - UserListViewControllerPresenterProtocol
+
+extension UserListViewController: UserListViewControllerProtocol {
+    
+    func fetchUsers() {
+        presenter?.fetchUsers(success: {
+            self.tableView.reloadData()
+        }) { error in
+            AlertManager().alertAction(viewController: self, title: error, message: "再試行しますか?", handler1: {_ in
+                self.fetchUsers()
+            }) { _ in
+                
+            }
+        }
+    }
+}
 
 
 
