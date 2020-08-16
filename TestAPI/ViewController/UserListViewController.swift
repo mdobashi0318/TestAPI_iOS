@@ -163,7 +163,7 @@ extension UserListViewController: UIAdaptivePresentationControllerDelegate {
                                          title: nil,
                                          message: "編集途中の内容がありますが削除しますか?",
                                          closeButton: "キャンセル",
-                                         handler1: { [weak self] action in
+                                         didTapDeleteButton: { [weak self] action in
                                             self?.registerViewController?.dismiss(animated: true)
         }) { _ in
             return
@@ -185,7 +185,7 @@ extension UserListViewController: UserListViewControllerProtocol {
         presenter?.fetchUsers(success: {
             self.tableView.reloadData()
         }) { error in
-            AlertManager().alertAction(viewController: self, title: error, message: "再試行しますか?", handler1: {_ in
+            AlertManager().alertAction(viewController: self, title: error, message: "再試行しますか?", didTapYesButton: {_ in
                 self.fetchUsers()
             }) { _ in
                 

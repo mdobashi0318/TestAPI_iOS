@@ -169,7 +169,7 @@ extension RegisterViewController: RegisterViewControllerProtocol {
             AlertManager().alertAction(viewController: self,
                                        title: "接続に失敗しました",
                                        message: "再度接続しますか?",
-                                       handler1: { action in
+                                       didTapYesButton: { action in
                                         
             }) { _ in }
         }
@@ -191,7 +191,7 @@ extension RegisterViewController: RegisterViewControllerProtocol {
             AlertManager().alertAction(viewController: self,
                                        title: "接続に失敗しました",
                                        message: "再度接続しますか?",
-                                       handler1: { action in
+                                       didTapYesButton: { action in
                                         
             }) { _ in }
         }
