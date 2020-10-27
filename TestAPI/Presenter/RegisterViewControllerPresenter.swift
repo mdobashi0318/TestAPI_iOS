@@ -32,7 +32,7 @@ class RegisterViewControllerPresenter {
     ///   - id: ID
     ///   - name: 変更する名前
     ///   - text: 変更するテキスト
-    func putRequest(id: String?, name: String, text: String, success: @escaping()->(Void), failure: @escaping (String?)->()) {
+    func putRequest(id: Int?, name: String, text: String, success: @escaping()->(Void), failure: @escaping (String?)->()) {
     
         UsersModel.putRequest(id: id, name: name, text: text) { afError in
             if let _afError = afError {
