@@ -8,17 +8,15 @@
 
 import UIKit
 
-class AlertManager {
-    
-    
-    
+struct AlertManager {
+   
     /// 閉じるボタンが付いたアラート
-    func alertAction(viewController:UIViewController, title: String, message: String, handler: @escaping (UIAlertAction) -> ()){
+    func alertAction(viewController:UIViewController, title: String, message: String, didTapButton: @escaping (UIAlertAction) -> ()){
         let controller:UIAlertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
         controller.addAction(UIAlertAction(title: "閉じる",
                                            style: .default,
-                                           handler: handler)
+                                           handler: didTapButton)
         )
         viewController.present(controller, animated: true, completion: nil)
     }
@@ -26,17 +24,17 @@ class AlertManager {
     
     
     /// 「削除」、「閉じる」が付いたアラート
-    func alertDeleteAction(viewController:UIViewController, title: String?, message: String,  deleteButton: String = "削除", closeButton: String = "閉じる", handler1: @escaping (UIAlertAction)->(),handler2: @escaping (UIAlertAction) -> ()){
+    func alertDeleteAction(viewController:UIViewController, title: String?, message: String,  deleteButton: String = "削除", closeButton: String = "閉じる", didTapDeleteButton: @escaping (UIAlertAction)->(),didTapCloseButton: @escaping (UIAlertAction) -> ()){
         let controller:UIAlertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
         controller.addAction(UIAlertAction(title: deleteButton,
                                            style: .destructive,
-                                           handler: handler1)
+                                           handler: didTapDeleteButton)
         )
         
         controller.addAction(UIAlertAction(title: closeButton,
                                            style: .default,
-                                           handler: handler2)
+                                           handler: didTapCloseButton)
         )
         viewController.present(controller, animated: true, completion: nil)
     }
@@ -44,17 +42,17 @@ class AlertManager {
     
     
     /// 「はい」、「いいえ」が付いたアラート
-    func alertAction(viewController:UIViewController, title: String?, message: String, handler1: @escaping (UIAlertAction)->(),handler2: @escaping (UIAlertAction) -> ()){
+    func alertAction(viewController:UIViewController, title: String?, message: String, didTapYesButton: @escaping (UIAlertAction)->(),didTapNoButton: @escaping (UIAlertAction) -> ()){
         let controller:UIAlertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
         controller.addAction(UIAlertAction(title: "はい",
                                            style: .default,
-                                           handler: handler1)
+                                           handler: didTapYesButton)
         )
         
         controller.addAction(UIAlertAction(title: "いいえ",
                                            style: .cancel,
-                                           handler: handler2)
+                                           handler: didTapNoButton)
         )
         viewController.present(controller, animated: true, completion: nil)
     }

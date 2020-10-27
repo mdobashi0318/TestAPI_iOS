@@ -15,31 +15,29 @@ let ViewUpdate: String = "viewUpdate"
 
 
 
+// MARK: - UserListViewControllerProtocol
 
-// MARK: - ViewController
+protocol UserListViewControllerProtocol {
+    /// ユーザ全件検索
+    func fetchUsers()
+}
 
-class ViewController: UITableViewController, UIAdaptivePresentationControllerDelegate {
+
+// MARK: - UserListViewController
+
+class UserListViewController: UITableViewController {
 
     
     // MARK: Properties
     
     /// テーブルビューを上からスワイプしたとき
-    let refreshCtr = UIRefreshControl()
-    
-    
-    /// ユーザー名を格納
-    var usersModel: [UsersModel]? {
-        didSet {
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-        }
-    }
-    
-    
+    private let refreshCtr = UIRefreshControl()
+        
+    /// プレゼンター
+    private var presenter: UserListViewControllerPresenter?
     
     /// 入力画面VC
-    var registerViewController: UINavigationController?
+    private var registerViewController: UINavigationController?
 
 
     // MARK: LifeCycle
@@ -47,6 +45,8 @@ class ViewController: UITableViewController, UIAdaptivePresentationControllerDel
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        
+        presenter = UserListViewControllerPresenter()
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(rightBarAction))
         NotificationCenter.default.addObserver(self, selector: #selector(callViewWillAppear(notification:)), name: NSNotification.Name(rawValue: ViewUpdate), object: nil)
@@ -56,35 +56,16 @@ class ViewController: UITableViewController, UIAdaptivePresentationControllerDel
         tableView.dataSource = self
         tableView.delegate = self
         tableView.refreshControl = refreshCtr
-        refreshCtr.addTarget(self, action: #selector(ViewController.refresh(sender:)), for: .valueChanged)
+        refreshCtr.addTarget(self, action: #selector(UserListViewController.refresh(sender:)), for: .valueChanged)
 
-        
     }
     
     
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
         fetchUsers()
-    }
-    
-    
-    
-    // MARK: Request
-    
-    /// 全ユーザー名を取得する
-    private func fetchUsers() {
-        UsersModel.fetchUsers(viewController: self) { [weak self] result, error in
-            if error != nil {
-                AlertManager().alertAction(viewController: self!, title: "接続に失敗しました", message: "再度接続しますか?", handler1: { action in
-                    self?.fetchUsers()
-                    
-                }) { _ in }
-                
-            }
-            self?.usersModel = result
-            
-        }
     }
     
     
@@ -99,60 +80,8 @@ class ViewController: UITableViewController, UIAdaptivePresentationControllerDel
     }
     
     
-    func presentationControllerDidAttemptToDismiss(_ presentationController: UIPresentationController) {
-        AlertManager().alertDeleteAction(viewController: registerViewController!, title: nil, message: "編集途中の内容がありますが削除しますか?", closeButton: "キャンセル", handler1: { [weak self] action in
-            self?.registerViewController?.dismiss(animated: true)
-        }) { _ in
-            return
-        }
-    }
     
-    
-    
-    
-    // MARK: UITableViewDelegate, UITableViewDataSource
-    
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell: CustomCell = tableView.dequeueReusableCell(withIdentifier: "cell") as! CustomCell
-        cell.textLabel?.text = usersModel?[indexPath.row].name
-        cell.detailTextLabel?.text = usersModel?[indexPath.row].text
-        
-        return cell
-    }
-    
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        navigationController?.pushViewController(RegisterViewController(mode: .detail, userModel: usersModel?[indexPath.row]), animated: true)
-    }
-    
-    
-    
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if usersModel == nil {
-            return 1
-        }
-        
-        return usersModel!.count
-    }
-    
-    
-    
-    
-    
-     /// 編集と削除のスワイプをセット
-    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        
-        let edit = UIContextualAction(style: .normal, title: "編集") { [weak self] _,_,_  in
-            self?.registerViewController = UINavigationController(rootViewController: RegisterViewController(mode: .edit, userModel: self?.usersModel?[indexPath.row]))
-            self?.registerViewController?.presentationController?.delegate = self
-            self?.present(self!.registerViewController!, animated: true)
-        }
-        edit.backgroundColor = .orange
-        
-        return UISwipeActionsConfiguration(actions: [edit])
-    }
-    
-    
+
     @objc func refresh(sender: UIRefreshControl) {
         fetchUsers()
         sender.endRefreshing()
@@ -171,6 +100,99 @@ class ViewController: UITableViewController, UIAdaptivePresentationControllerDel
 
 }
 
+
+
+
+
+// MARK: - UITableViewDelegate, UITableViewDataSource
+
+extension UserListViewController {
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell: CustomCell = tableView.dequeueReusableCell(withIdentifier: "cell") as! CustomCell
+        cell.textLabel?.text = presenter?.model?[indexPath.row].name
+        cell.detailTextLabel?.text = presenter?.model?[indexPath.row].text
+        
+        return cell
+    }
+    
+    
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        navigationController?.pushViewController(RegisterViewController(mode: .detail, userModel: presenter?.model?[indexPath.row]), animated: true)
+    }
+    
+    
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if presenter?.model == nil {
+            return 1
+        }
+        
+        return (presenter?.model!.count)!
+    }
+    
+    
+    
+     /// 編集と削除のスワイプをセット
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
+        let edit = UIContextualAction(style: .normal, title: "編集") { [weak self] _,_,_  in
+            self?.registerViewController = UINavigationController(rootViewController: RegisterViewController(mode: .edit, userModel: self?.presenter?.model?[indexPath.row]))
+            self?.registerViewController?.presentationController?.delegate = self
+            self?.present(self!.registerViewController!, animated: true)
+        }
+        edit.backgroundColor = .orange
+        
+        return UISwipeActionsConfiguration(actions: [edit])
+    }
+    
+}
+
+
+
+
+
+// MARK: - UserListViewControllerPresenterProtocol
+
+extension UserListViewController: UIAdaptivePresentationControllerDelegate {
+    
+    /// 編集中にモーダルを閉じようとした時に確認アラートを表示する
+    func presentationControllerDidAttemptToDismiss(_ presentationController: UIPresentationController) {
+        AlertManager().alertDeleteAction(viewController: registerViewController!,
+                                         title: nil,
+                                         message: "編集途中の内容がありますが削除しますか?",
+                                         closeButton: "キャンセル",
+                                         didTapDeleteButton: { [weak self] action in
+                                            self?.registerViewController?.dismiss(animated: true)
+        }) { _ in
+            return
+        }
+    }
+    
+    
+}
+
+
+
+
+
+// MARK: - UserListViewControllerPresenterProtocol
+
+extension UserListViewController: UserListViewControllerProtocol {
+    
+    func fetchUsers() {
+        presenter?.fetchUsers(success: {
+            self.tableView.reloadData()
+        }) { error in
+            AlertManager().alertAction(viewController: self, title: error, message: "再試行しますか?", didTapYesButton: {_ in
+                self.fetchUsers()
+            }) { _ in
+                
+            }
+        }
+    }
+}
 
 
 
