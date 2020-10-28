@@ -28,7 +28,7 @@ class RegisterViewControllerPresenterTest: XCTestCase {
         
         presenter?.postRequest(name: "UnitTest", text: "UnitTestText", success: { 
             exp.fulfill()
-        }, failure: { _ in
+        }, failure: { _, _ in
             
         })
          
@@ -43,7 +43,7 @@ class RegisterViewControllerPresenterTest: XCTestCase {
         presenter?.putRequest(id: 1, name: "UnitPutTest", text: "UnitPutTestText", success: {
             ///
             exp.fulfill()
-        }, failure: { _ in
+        }, failure: { _, _ in
             
         })
         

@@ -73,7 +73,7 @@ class UserListViewController: UITableViewController {
     // MARK: NavigationButtonAction
     
     @objc override func rightBarAction() {
-        let _registerViewController = RegisterViewController()
+        let _registerViewController = RegisterTableViewController(style: .grouped, mode: .add, userModel: nil)
         registerViewController = UINavigationController(rootViewController: _registerViewController)
         registerViewController?.presentationController?.delegate = self
         present(registerViewController!, animated: true)
@@ -119,7 +119,7 @@ extension UserListViewController {
     
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        navigationController?.pushViewController(RegisterViewController(mode: .detail, userModel: presenter?.model?[indexPath.row]), animated: true)
+        navigationController?.pushViewController(RegisterTableViewController(mode: .detail, userModel: presenter?.model?[indexPath.row]), animated: true)
     }
     
     
@@ -138,7 +138,7 @@ extension UserListViewController {
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         let edit = UIContextualAction(style: .normal, title: "編集") { [weak self] _,_,_  in
-            self?.registerViewController = UINavigationController(rootViewController: RegisterViewController(mode: .edit, userModel: self?.presenter?.model?[indexPath.row]))
+            self?.registerViewController = UINavigationController(rootViewController: RegisterTableViewController(mode: .edit, userModel: self?.presenter?.model?[indexPath.row]))
             self?.registerViewController?.presentationController?.delegate = self
             self?.present(self!.registerViewController!, animated: true)
         }

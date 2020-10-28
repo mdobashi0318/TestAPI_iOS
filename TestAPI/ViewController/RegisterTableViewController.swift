@@ -11,7 +11,7 @@ import UIKit
 
 // MARK: - RegisterViewController
 
-protocol RegisterViewControllerProtocol {
+protocol RegisterTableViewControllerProtocol {
     /// ユーザを登録する
     func postUser()
     
@@ -23,39 +23,9 @@ protocol RegisterViewControllerProtocol {
 
 // MARK: - RegisterViewController
 
-class RegisterViewController: UIViewController {
+class RegisterTableViewController: UITableViewController {
     
     // MARK: Properties
-    
-    private lazy var registerView: RegisterView = {
-        let view = RegisterView(frame: CGRect(x: 0,
-                                              y: 0,
-                                              width: UIScreen.main.bounds.width,
-                                              height: UIScreen.main.bounds.height)
-        )
-        view.backgroundColor = .white
-        view.nameTextField.delegate = self
-        view.textView.delegate = self
-        
-        switch mode {
-        case .edit:
-            view.nameTextField.text = userModel?.name
-            
-            view.textView.text = userModel?.text
-        case .detail:
-            view.nameTextField.text = userModel?.name
-            view.nameTextField.isUserInteractionEnabled = false
-            
-            
-            view.textView.text = userModel?.text
-            view.textView.isUserInteractionEnabled = false
-        default:
-            break
-        }
-        return view
-    }()
-    
-    
     private var userModel: UsersModel?
     
     
@@ -65,13 +35,22 @@ class RegisterViewController: UIViewController {
     private var presenter: RegisterViewControllerPresenter?
     
     
+    private var name: String?
+    
+    private var text: String?
+    
+    private var imageStr: String?
+    
+    
     
     // MARK: Init
     
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    override init(style: UITableView.Style) {
+        super.init(style: style)
         
         presenter = RegisterViewControllerPresenter()
+        tableView.delegate = self
+        tableView.dataSource = self
     }
     
     
@@ -80,10 +59,15 @@ class RegisterViewController: UIViewController {
     /// - Parameters:
     ///   - mode: Mode Enum
     ///   - userModel: 開くuserModelを格納
-    convenience init(mode: Mode, userModel:UsersModel?) {
-        self.init()
+    convenience init(style: UITableView.Style = .grouped, mode: Mode, userModel: UsersModel?) {
+        self.init(style: style)
         self.mode = mode
         self.userModel = userModel
+        
+        
+        if mode != .detail {
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(rightBarAction))
+        }
     }
     
     
@@ -91,43 +75,11 @@ class RegisterViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
-    
-    
-    // MARK: Lifecycle
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
         
-        if mode != .detail {
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(rightBarAction))
-        }
-        view.addSubview(registerView)
-    }
-    
-    
-    
     
     // MARK: NavigationItem
     
     override func rightBarAction() {
-        
-        guard !registerView.nameTextField.text!.isEmpty else {
-            AlertManager().alertAction(viewController: self,
-                                       title: "", message: "名前が入力されていません") { _ in return
-            }
-            return
-        }
-        
-        
-        guard !registerView.textView.text!.isEmpty else {
-            AlertManager().alertAction(viewController: self,
-                                       title: "", message: "テキストが入力されていません") { _ in return
-            }
-            return
-        }
-        
         if mode == .add {
             postUser()
             
@@ -135,6 +87,7 @@ class RegisterViewController: UIViewController {
             putUser()
             
         }
+        
     }
     
 
@@ -151,12 +104,80 @@ class RegisterViewController: UIViewController {
 
 
 
+extension RegisterTableViewController {
+    
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return 3
+    }
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+    
+    
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell()
+        let leading: CGFloat = 10
+        
+        switch indexPath.section {
+        case 0:
+            let nameTextField = UITextField()
+            nameTextField.delegate = self
+            nameTextField.placeholder = "名前を入力してください"
+            nameTextField.accessibilityIdentifier = "nameTextField"
+            if mode != .add {
+                nameTextField.text = userModel?.name
+                if mode == .detail {
+                    nameTextField.isUserInteractionEnabled = false
+                }
+            }
+            cell.contentView.addSubview(nameTextField)
+            nameTextField.translatesAutoresizingMaskIntoConstraints = false
+            nameTextField.topAnchor.constraint(equalTo: cell.topAnchor).isActive = true
+            nameTextField.bottomAnchor.constraint(equalTo: cell.bottomAnchor).isActive = true
+            nameTextField.leadingAnchor.constraint(equalTo: cell.leadingAnchor, constant: leading).isActive = true
+            nameTextField.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -leading).isActive = true
+            
+        case 1:
+            let textView = UITextView()
+            textView.delegate = self
+            textView.accessibilityIdentifier = "inputTextView"
+            if mode != .add {
+                textView.text = userModel?.text
+                if mode == .detail {
+                    textView.isUserInteractionEnabled = false
+                }
+            }
+            
+            cell.contentView.addSubview(textView)
+            textView.translatesAutoresizingMaskIntoConstraints = false
+            textView.topAnchor.constraint(equalTo: cell.topAnchor).isActive = true
+            textView.bottomAnchor.constraint(equalTo: cell.bottomAnchor).isActive = true
+            textView.leadingAnchor.constraint(equalTo: cell.leadingAnchor, constant: leading).isActive = true
+            textView.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -leading).isActive = true
+
+        case 2:
+            break
+        default:
+            break
+        }
+        
+        return cell
+    }
+    
+}
+
+
+
+
+
 // MARK: - RegisterViewControllerPresenterProtocol
 
-extension RegisterViewController: RegisterViewControllerProtocol {
+extension RegisterTableViewController: RegisterTableViewControllerProtocol {
     
     func postUser() {
-        presenter?.postRequest(name: registerView.nameTextField.text!, text: registerView.textView.text!, success: {
+        presenter?.postRequest(name: name, text: text, success: {
             
             AlertManager().alertAction(viewController: self,
                                        title:"", message: "ユーザを保存しました") { _ in
@@ -165,19 +186,16 @@ extension RegisterViewController: RegisterViewControllerProtocol {
                                         }
             }
             
-        }) { _ in
-            AlertManager().alertAction(viewController: self,
-                                       title: "接続に失敗しました",
-                                       message: "再度接続しますか?",
-                                       didTapYesButton: { action in
-                                        
-            }) { _ in }
+        }) { title, message in
+            AlertManager().alertAction(viewController: self, title: title, message: message, didTapButton: { _ in
+                return
+            })
         }
     }
     
     
     func putUser() {
-        presenter?.putRequest(id: self.userModel?.id, name: registerView.nameTextField.text!, text: registerView.textView.text!, success: {
+        presenter?.putRequest(id: self.userModel?.id, name: name, text: text, success: {
             
             AlertManager().alertAction(viewController: self,
                                        title: "", message: "ユーザを更新しました") { _ in
@@ -187,13 +205,10 @@ extension RegisterViewController: RegisterViewControllerProtocol {
             }
             
             
-        }) { _ in
-            AlertManager().alertAction(viewController: self,
-                                       title: "接続に失敗しました",
-                                       message: "再度接続しますか?",
-                                       didTapYesButton: { action in
-                                        
-            }) { _ in }
+        }) { title ,message in
+            AlertManager().alertAction(viewController: self, title: title, message: message, didTapButton: { _ in
+                return
+            })
         }
     }
     
@@ -205,12 +220,14 @@ extension RegisterViewController: RegisterViewControllerProtocol {
 
 // MARK: - TextField Delegate, TextView Delegate
 
-extension RegisterViewController: UITextFieldDelegate, UITextViewDelegate {
+extension RegisterTableViewController: UITextFieldDelegate, UITextViewDelegate {
     
     // MARK: TextField Delegate
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
-        if textField.text!.isEmpty && registerView.textView.text.isEmpty {
+        name = textField.text
+        
+        if name == nil {
             isModalInPresentation = false
         } else {
             isModalInPresentation = true
@@ -223,7 +240,9 @@ extension RegisterViewController: UITextFieldDelegate, UITextViewDelegate {
     // MARK: TextView Delegate
     
     func textViewDidChange(_ textView: UITextView) {
-        if textView.text.isEmpty && registerView.nameTextField.text!.isEmpty {
+        text = textView.text
+        
+        if name == nil {
             isModalInPresentation = false
         } else {
             isModalInPresentation = true
