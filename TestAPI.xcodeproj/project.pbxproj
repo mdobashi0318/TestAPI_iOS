@@ -20,6 +20,8 @@
 		D0C3413323BF07C600507377 /* TestAPIUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C3413223BF07C600507377 /* TestAPIUITests.swift */; };
 		D0D6AC6623C1B6C500968258 /* RegisterTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0D6AC6523C1B6C500968258 /* RegisterTableViewController.swift */; };
 		D0D6AC6923C1E56700968258 /* ViewControllerExtennsion.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0D6AC6823C1E56700968258 /* ViewControllerExtennsion.swift */; };
+		D0F156EC25510C9700791E82 /* ImageButtonCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D0F156EB25510C9600791E82 /* ImageButtonCell.xib */; };
+		D0F156F125510CBC00791E82 /* ImageButtonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F156F025510CBC00791E82 /* ImageButtonCell.swift */; };
 		D0F50EAC24E8E64B00F74D20 /* UserListViewControllerPresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F50EAB24E8E64B00F74D20 /* UserListViewControllerPresenterTests.swift */; };
 		D0F50EAE24E90C9A00F74D20 /* RegisterViewControllerPresenterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F50EAD24E90C9A00F74D20 /* RegisterViewControllerPresenterTest.swift */; };
 /* End PBXBuildFile section */
@@ -63,6 +65,8 @@
 		D0C3413423BF07C600507377 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D0D6AC6523C1B6C500968258 /* RegisterTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterTableViewController.swift; sourceTree = "<group>"; };
 		D0D6AC6823C1E56700968258 /* ViewControllerExtennsion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerExtennsion.swift; sourceTree = "<group>"; };
+		D0F156EB25510C9600791E82 /* ImageButtonCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ImageButtonCell.xib; sourceTree = "<group>"; };
+		D0F156F025510CBC00791E82 /* ImageButtonCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageButtonCell.swift; sourceTree = "<group>"; };
 		D0F50EAB24E8E64B00F74D20 /* UserListViewControllerPresenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListViewControllerPresenterTests.swift; sourceTree = "<group>"; };
 		D0F50EAD24E90C9A00F74D20 /* RegisterViewControllerPresenterTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewControllerPresenterTest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -174,6 +178,7 @@
 				D056939D23C34A1700149670 /* Models */,
 				D0056C4E24E7DDA900F13CAA /* Presenter */,
 				D09E6B90248BE264002962E4 /* ViewController */,
+				D0D9265125519AD00063F552 /* Cells */,
 				D0D6AC6723C1E52B00968258 /* Extensions */,
 				D034E45F23C0C43300610425 /* Other */,
 				D0C3411923BF07C600507377 /* Assets.xcassets */,
@@ -208,6 +213,15 @@
 				D0D6AC6823C1E56700968258 /* ViewControllerExtennsion.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		D0D9265125519AD00063F552 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				D0F156EB25510C9600791E82 /* ImageButtonCell.xib */,
+				D0F156F025510CBC00791E82 /* ImageButtonCell.swift */,
+			);
+			path = Cells;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -318,6 +332,7 @@
 			files = (
 				D0C3411D23BF07C600507377 /* LaunchScreen.storyboard in Resources */,
 				D0C3411A23BF07C600507377 /* Assets.xcassets in Resources */,
+				D0F156EC25510C9700791E82 /* ImageButtonCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -386,6 +401,7 @@
 			files = (
 				D034E45E23C0C41500610425 /* AlertManager.swift in Sources */,
 				D0C3411523BF07C200507377 /* UserListViewController.swift in Sources */,
+				D0F156F125510CBC00791E82 /* ImageButtonCell.swift in Sources */,
 				D056939F23C34A3900149670 /* UsersModel.swift in Sources */,
 				D0C3411123BF07C200507377 /* AppDelegate.swift in Sources */,
 				D0056C5224E818A600F13CAA /* RegisterViewControllerPresenter.swift in Sources */,

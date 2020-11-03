@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import Photos
 
 // MARK: - RegisterViewController
 
@@ -41,7 +41,7 @@ class RegisterTableViewController: UITableViewController {
     
     private var imageStr: String?
     
-    
+    private var imageButtonCell: ImageButtonCell!
     
     // MARK: Init
     
@@ -51,6 +51,8 @@ class RegisterTableViewController: UITableViewController {
         presenter = RegisterViewControllerPresenter()
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.register(UINib(nibName: "ImageButtonCell", bundle: nil), forCellReuseIdentifier: "cell")
+
     }
     
     
@@ -158,12 +160,28 @@ extension RegisterTableViewController {
             textView.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -leading).isActive = true
 
         case 2:
-            break
+            imageButtonCell = tableView.dequeueReusableCell(withIdentifier: "cell") as? ImageButtonCell
+            imageButtonCell.delegate = self
+            
+            return imageButtonCell
+            
         default:
             break
         }
         
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section == 2 {
+            return 70
+        }
+        return 50
+    }
+    
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
 }
@@ -253,54 +271,49 @@ extension RegisterTableViewController: UITextFieldDelegate, UITextViewDelegate {
 
 
 
-// MARK: - RegisterView
-
-
-class RegisterView: UIView {
+extension RegisterTableViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
-    // MARK: Properties
-    
-    let _bounds:CGRect = UIScreen.main.bounds
-    
-    /// 名前入力TextField
-    lazy var nameTextField: UITextField = {
-        let textfield: UITextField = UITextField()
-        textfield.frame = CGRect(x: 20, y: _bounds.origin.y + 100, width: _bounds.width * 0.8, height: 50)
-        textfield.placeholder = "名前を入力してください"
-        textfield.accessibilityIdentifier = "nameTextField"
-        textfield.layer.borderWidth = 0.5
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        picker.dismiss(animated: true)
+        let image = info[.originalImage] as! UIImage
+        let imageData: Data = image.pngData()! as Data
+        imageStr = imageData.base64EncodedString()
         
-        return textfield
-    }()
-    
-    
-    
-    /// テキストビュー
-    lazy var textView: UITextView = {
-        let textView: UITextView = UITextView()
-        textView.frame = CGRect(x: 20, y: nameTextField.frame.origin.y + nameTextField.frame.height + 50, width: _bounds.width * 0.8, height: 100)
-        textView.layer.borderWidth = 0.5
-        textView.accessibilityIdentifier = "inputTextView"
-        
-        return textView
-    }()
-    
-    
-    
-    
-    // MARK: Init
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        
-        addSubview(nameTextField)
-        addSubview(textView)
+        if let imageStr = imageStr,
+           let data = Data(base64Encoded: imageStr, options: .ignoreUnknownCharacters){
+            imageButtonCell.imageV.image = UIImage(data: data)
+        } else {
+            imageStr = nil
+            imageButtonCell.imageV.image = nil
+        }
     }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     
 }
 
+
+extension RegisterTableViewController: ImageButtonCellDelegate {
+    
+    func didTapImageButton() {
+        switch PHPhotoLibrary.authorizationStatus() {
+        case .authorized:
+            if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
+                let imagePicker = UIImagePickerController()
+                imagePicker.delegate = self
+                imagePicker.sourceType = .photoLibrary
+                imagePicker.allowsEditing = true
+                self.present(imagePicker, animated: true, completion: nil)
+            }
+            
+        default:
+            PHPhotoLibrary.requestAuthorization { _ in
+            }
+            
+        }
+
+    }
+    
+    
+    
+    
+    
+}
