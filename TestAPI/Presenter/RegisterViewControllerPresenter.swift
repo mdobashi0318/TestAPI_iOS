@@ -11,7 +11,7 @@ import Foundation
 final class RegisterViewControllerPresenter {
     
     /// ユーザー名を作成する
-    func postRequest(name: String?, text: String?, success: @escaping()->(Void), failure: @escaping (String? ,String)->()) {
+    func postRequest(name: String?, text: String?, image: String?, success: @escaping()->(Void), failure: @escaping (String? ,String)->()) {
         
         guard let name = name else {
             failure(nil, "名前が入力されていません")
@@ -24,7 +24,12 @@ final class RegisterViewControllerPresenter {
         }
         
         
-        UsersModel.postRequest(name: name, text: text) { afError in
+        guard let image = image else {
+            failure(nil, "画像が追加されていません")
+            return
+        }
+        
+        UsersModel.postRequest(name: name, text: text, image: image) { afError in
             if let _afError = afError {
                 print(_afError)
                 failure("接続に失敗しました", "再度接続しますか?")
@@ -42,7 +47,7 @@ final class RegisterViewControllerPresenter {
     ///   - id: ID
     ///   - name: 変更する名前
     ///   - text: 変更するテキスト
-    func putRequest(id: Int?, name: String?, text: String?, success: @escaping()->(Void), failure: @escaping (String? ,String)->()) {
+    func putRequest(id: Int?, name: String?, text: String?, image: String?, success: @escaping()->(Void), failure: @escaping (String? ,String)->()) {
         
         guard let name = name else {
             failure(nil, "名前が入力されていません")
@@ -53,9 +58,13 @@ final class RegisterViewControllerPresenter {
             failure(nil, "テキストが入力されていません")
             return
         }
-        
     
-        UsersModel.putRequest(id: id, name: name, text: text) { afError in
+        guard let image = image else {
+            failure(nil, "画像が追加されていません")
+            return
+        }
+    
+        UsersModel.putRequest(id: id, name: name, text: text, image: image) { afError in
             if let _afError = afError {
                 print(_afError)
                 failure("接続に失敗しました", "再度接続しますか?")

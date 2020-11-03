@@ -26,6 +26,9 @@ class UsersModel: Codable {
     /// テキスト
     var text: String?
     
+    /// 画像
+    var image: String?
+    
     
     // MARK: Request
     
@@ -67,9 +70,9 @@ class UsersModel: Codable {
     ///   - viewController: 呼び出し元のVIewController
     ///   - name: 登録する名前
     ///   - text: 登録するテキスト
-    class func postRequest(name: String, text: String, callBack: @escaping(AFError?) -> ()) {
+    class func postRequest(name: String, text: String, image: String, callBack: @escaping(AFError?) -> ()) {
         let params:[String:Any] = [
-            "user":["name":name, "text":text]
+            "user":["name":name, "text":text, "image":image]
         ]
         
         AF.request(url!, method: .post, parameters: params).response { response in
@@ -93,7 +96,7 @@ class UsersModel: Codable {
     ///   - id: ID
     ///   - name: 変更する名前
     ///   - text: 変更するテキスト
-    class func putRequest(id: Int?, name: String, text: String, callBack: @escaping(AFError?) -> ()) {
+    class func putRequest(id: Int?, name: String, text: String, image: String, callBack: @escaping(AFError?) -> ()) {
         
         guard let _id = id else {
             print("idの取得に失敗")
@@ -103,7 +106,7 @@ class UsersModel: Codable {
         let acccesURL = URL(string: String("\(url!)/\(_id)"))
         
         let params:[String:Any] = [
-            "user":["name":name, "text":text]
+            "user":["name":name, "text":text, "image":image]
         ]
         
         

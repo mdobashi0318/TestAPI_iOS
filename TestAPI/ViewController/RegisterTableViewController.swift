@@ -163,6 +163,15 @@ extension RegisterTableViewController {
             imageButtonCell = tableView.dequeueReusableCell(withIdentifier: "cell") as? ImageButtonCell
             imageButtonCell.delegate = self
             
+            if let imageStr = userModel?.image,
+               let data = Data(base64Encoded: imageStr, options: .ignoreUnknownCharacters){
+                imageButtonCell.imageV.image = UIImage(data: data)
+            }
+            
+            if mode == .detail {
+                imageButtonCell.isSelected = false
+            }
+            
             return imageButtonCell
             
         default:
@@ -177,6 +186,14 @@ extension RegisterTableViewController {
             return 70
         }
         return 50
+    }
+    
+    
+    override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        if mode == .detail {
+            return nil
+        }
+        return indexPath
     }
     
     
@@ -195,7 +212,7 @@ extension RegisterTableViewController {
 extension RegisterTableViewController: RegisterTableViewControllerProtocol {
     
     func postUser() {
-        presenter?.postRequest(name: name, text: text, success: {
+        presenter?.postRequest(name: name, text: text, image: imageStr, success: {
             
             AlertManager().alertAction(viewController: self,
                                        title:"", message: "ユーザを保存しました") { _ in
@@ -213,7 +230,7 @@ extension RegisterTableViewController: RegisterTableViewControllerProtocol {
     
     
     func putUser() {
-        presenter?.putRequest(id: self.userModel?.id, name: name, text: text, success: {
+        presenter?.putRequest(id: self.userModel?.id, name: name, text: text, image: imageStr, success: {
             
             AlertManager().alertAction(viewController: self,
                                        title: "", message: "ユーザを更新しました") { _ in
@@ -277,7 +294,7 @@ extension RegisterTableViewController: UIImagePickerControllerDelegate, UINaviga
         picker.dismiss(animated: true)
         let image = info[.originalImage] as! UIImage
         let imageData: Data = image.pngData()! as Data
-        imageStr = imageData.base64EncodedString()
+        imageStr = imageData.base64EncodedString(options: .lineLength64Characters)
         
         if let imageStr = imageStr,
            let data = Data(base64Encoded: imageStr, options: .ignoreUnknownCharacters){
