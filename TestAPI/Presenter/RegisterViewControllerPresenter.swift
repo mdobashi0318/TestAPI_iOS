@@ -24,11 +24,6 @@ final class RegisterViewControllerPresenter {
         }
         
         
-        guard let image = image else {
-            failure(nil, "画像が追加されていません")
-            return
-        }
-        
         UsersModel.postRequest(name: name, text: text, image: image) { afError in
             if let _afError = afError {
                 print(_afError)
@@ -59,10 +54,6 @@ final class RegisterViewControllerPresenter {
             return
         }
     
-        guard let image = image else {
-            failure(nil, "画像が追加されていません")
-            return
-        }
     
         UsersModel.putRequest(id: id, name: name, text: text, image: image) { afError in
             if let _afError = afError {
