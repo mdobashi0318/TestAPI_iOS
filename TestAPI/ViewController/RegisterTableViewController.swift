@@ -138,6 +138,7 @@ extension RegisterTableViewController {
                 nameTextField.text = name
                 if mode == .detail {
                     nameTextField.isUserInteractionEnabled = false
+                    cell.selectionStyle = .none
                 }
             }
             cell.contentView.addSubview(nameTextField)
@@ -155,6 +156,7 @@ extension RegisterTableViewController {
                 textView.text = text
                 if mode == .detail {
                     textView.isUserInteractionEnabled = false
+                    cell.selectionStyle = .none
                 }
             }
             
