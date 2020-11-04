@@ -8,6 +8,7 @@
 
 import UIKit
 import Photos
+import PKHUD
 
 // MARK: - RegisterViewController
 
@@ -221,8 +222,9 @@ extension RegisterTableViewController {
 extension RegisterTableViewController: RegisterTableViewControllerProtocol {
     
     func postUser() {
+        HUD.show(.progress)
         presenter?.postRequest(name: name, text: text, image: imageStr, success: {
-            
+            HUD.hide()
             AlertManager().alertAction(viewController: self,
                                        title:"", message: "ユーザを保存しました") { _ in
                                         self.dismiss(animated: true) {
@@ -231,6 +233,7 @@ extension RegisterTableViewController: RegisterTableViewControllerProtocol {
             }
             
         }) { title, message in
+            HUD.hide()
             AlertManager().alertAction(viewController: self, title: title, message: message, didTapButton: { _ in
                 return
             })
@@ -239,8 +242,9 @@ extension RegisterTableViewController: RegisterTableViewControllerProtocol {
     
     
     func putUser() {
+        HUD.show(.progress)
         presenter?.putRequest(id: self.userModel?.id, name: name, text: text, image: imageStr, success: {
-            
+            HUD.hide()
             AlertManager().alertAction(viewController: self,
                                        title: "", message: "ユーザを更新しました") { _ in
                                         self.dismiss(animated: true) {
@@ -250,6 +254,7 @@ extension RegisterTableViewController: RegisterTableViewControllerProtocol {
             
             
         }) { title ,message in
+            HUD.hide()
             AlertManager().alertAction(viewController: self, title: title, message: message, didTapButton: { _ in
                 return
             })

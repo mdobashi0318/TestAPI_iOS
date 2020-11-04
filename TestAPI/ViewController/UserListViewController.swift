@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import PKHUD
 
 // MARK: - Global
 /// iOS13以降でモーダルを閉じた時にViewWillAppearを呼ぶ
@@ -182,9 +182,12 @@ extension UserListViewController: UIAdaptivePresentationControllerDelegate {
 extension UserListViewController: UserListViewControllerProtocol {
     
     func fetchUsers() {
+        HUD.show(.progress)
         presenter?.fetchUsers(success: {
+            HUD.hide()
             self.tableView.reloadData()
         }) { error in
+            HUD.hide()
             AlertManager().alertAction(viewController: self, title: error, message: "再試行しますか?", didTapYesButton: {_ in
                 self.fetchUsers()
             }) { _ in
