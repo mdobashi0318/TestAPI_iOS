@@ -65,6 +65,11 @@ class RegisterTableViewController: UITableViewController {
         self.init(style: style)
         self.mode = mode
         self.userModel = userModel
+        if let model = userModel {
+            name = model.name
+            text = model.text
+            imageStr = model.image
+        }
         
         
         if mode != .detail {
@@ -105,6 +110,7 @@ class RegisterTableViewController: UITableViewController {
 
 
 
+// MARK: - UITableViewDataSource, UITableViewDelegate
 
 extension RegisterTableViewController {
     
@@ -129,7 +135,7 @@ extension RegisterTableViewController {
             nameTextField.placeholder = "名前を入力してください"
             nameTextField.accessibilityIdentifier = "nameTextField"
             if mode != .add {
-                nameTextField.text = userModel?.name
+                nameTextField.text = name
                 if mode == .detail {
                     nameTextField.isUserInteractionEnabled = false
                 }
@@ -146,7 +152,7 @@ extension RegisterTableViewController {
             textView.delegate = self
             textView.accessibilityIdentifier = "inputTextView"
             if mode != .add {
-                textView.text = userModel?.text
+                textView.text = text
                 if mode == .detail {
                     textView.isUserInteractionEnabled = false
                 }
@@ -163,13 +169,14 @@ extension RegisterTableViewController {
             imageButtonCell = tableView.dequeueReusableCell(withIdentifier: "cell") as? ImageButtonCell
             imageButtonCell.delegate = self
             
-            if let imageStr = userModel?.image,
+            if let imageStr = imageStr,
                let data = Data(base64Encoded: imageStr, options: .ignoreUnknownCharacters){
                 imageButtonCell.imageV.image = UIImage(data: data)
             }
             
             if mode == .detail {
                 imageButtonCell.isSelected = false
+                imageButtonCell.selectionStyle = .none
             }
             
             return imageButtonCell
@@ -288,6 +295,9 @@ extension RegisterTableViewController: UITextFieldDelegate, UITextViewDelegate {
 
 
 
+
+// MARK: - UIImagePickerControllerDelegate
+
 extension RegisterTableViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
@@ -307,6 +317,9 @@ extension RegisterTableViewController: UIImagePickerControllerDelegate, UINaviga
     
 }
 
+
+
+// MARK: - ImageButtonCellDelegate
 
 extension RegisterTableViewController: ImageButtonCellDelegate {
     
