@@ -27,7 +27,7 @@ final class RegisterViewControllerPresenter {
         UsersModel.postRequest(name: name, text: text, image: image) { afError in
             if let _afError = afError {
                 print(_afError)
-                failure("接続に失敗しました", "再度接続しますか?")
+                failure("接続に失敗しました", "時間をおいて再度お試しください")
                 return
                 
             }
@@ -58,7 +58,7 @@ final class RegisterViewControllerPresenter {
         UsersModel.putRequest(id: id, name: name, text: text, image: image) { afError in
             if let _afError = afError {
                 print(_afError)
-                failure("接続に失敗しました", "再度接続しますか?")
+                failure("接続に失敗しました", "時間をおいて再度お試しください")
                 return
                 
             }

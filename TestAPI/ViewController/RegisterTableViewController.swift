@@ -312,6 +312,7 @@ extension RegisterTableViewController: UIImagePickerControllerDelegate, UINaviga
         let image = info[.originalImage] as! UIImage
         let imageData: Data = image.pngData()! as Data
         imageStr = imageData.base64EncodedString(options: .lineLength64Characters)
+        isModalInPresentation = true
         
         if let imageStr = imageStr,
            let data = Data(base64Encoded: imageStr, options: .ignoreUnknownCharacters){
