@@ -135,6 +135,8 @@ extension RegisterTableViewController {
             nameTextField.delegate = self
             nameTextField.placeholder = "名前を入力してください"
             nameTextField.accessibilityIdentifier = "nameTextField"
+            nameTextField.backgroundColor = cell.backgroundColor
+            
             if mode != .add {
                 nameTextField.text = name
                 if mode == .detail {
@@ -153,6 +155,8 @@ extension RegisterTableViewController {
             let textView = UITextView()
             textView.delegate = self
             textView.accessibilityIdentifier = "inputTextView"
+            textView.backgroundColor = cell.backgroundColor
+            
             if mode != .add {
                 textView.text = text
                 if mode == .detail {
