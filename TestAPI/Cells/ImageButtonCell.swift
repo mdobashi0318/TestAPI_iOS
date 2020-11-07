@@ -10,7 +10,7 @@ import UIKit
 import Photos
 
 protocol ImageButtonCellDelegate: class {
-    func didTapImageButton()
+    func didTapImageCell()
 }
 
 
@@ -24,7 +24,7 @@ final class ImageButtonCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
         
         if selected {
-            delegate.didTapImageButton()
+            delegate.didTapImageCell()
         }
     }
     

@@ -22,6 +22,13 @@ protocol RegisterTableViewControllerProtocol {
 
 
 
+fileprivate enum RegisterCellType: Int, CaseIterable {
+    case name = 0
+    case text = 1
+    case image = 2
+}
+
+
 // MARK: - RegisterViewController
 
 class RegisterTableViewController: UITableViewController {
@@ -115,22 +122,24 @@ class RegisterTableViewController: UITableViewController {
 
 extension RegisterTableViewController {
     
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return RegisterCellType.allCases.count
     }
+    
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 1
     }
     
     
-    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell()
         let leading: CGFloat = 10
+        let cellType = RegisterCellType(rawValue: indexPath.section)
         
-        switch indexPath.section {
-        case 0:
+        switch cellType {
+        case .name:
             let nameTextField = UITextField()
             nameTextField.delegate = self
             nameTextField.placeholder = "名前を入力してください"
@@ -151,7 +160,7 @@ extension RegisterTableViewController {
             nameTextField.leadingAnchor.constraint(equalTo: cell.leadingAnchor, constant: leading).isActive = true
             nameTextField.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -leading).isActive = true
             
-        case 1:
+        case .text:
             let textView = UITextView()
             textView.delegate = self
             textView.accessibilityIdentifier = "inputTextView"
@@ -172,7 +181,7 @@ extension RegisterTableViewController {
             textView.leadingAnchor.constraint(equalTo: cell.leadingAnchor, constant: leading).isActive = true
             textView.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -leading).isActive = true
 
-        case 2:
+        case .image:
             imageButtonCell = tableView.dequeueReusableCell(withIdentifier: "cell") as? ImageButtonCell
             imageButtonCell.delegate = self
             
@@ -187,19 +196,24 @@ extension RegisterTableViewController {
             }
             
             return imageButtonCell
-            
-        default:
+        case .none:
             break
         }
         
         return cell
     }
     
+    
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == 2 {
+        let cellType = RegisterCellType(rawValue: indexPath.section)
+        
+        switch cellType {
+        case .image:
             return 70
+        default:
+            return 50
         }
-        return 50
+        
     }
     
     
@@ -335,7 +349,7 @@ extension RegisterTableViewController: UIImagePickerControllerDelegate, UINaviga
 
 extension RegisterTableViewController: ImageButtonCellDelegate {
     
-    func didTapImageButton() {
+    func didTapImageCell() {
         switch PHPhotoLibrary.authorizationStatus() {
         case .authorized:
             if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
@@ -351,11 +365,6 @@ extension RegisterTableViewController: ImageButtonCellDelegate {
             }
             
         }
-
     }
-    
-    
-    
-    
-    
+
 }
