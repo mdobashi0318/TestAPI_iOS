@@ -52,6 +52,8 @@ class RegisterTableViewController: UITableViewController {
     
     private var imageButtonCell: ImageButtonCell!
     
+    private var imageWindow: UIWindow?
+    
     // MARK: Init
     
     override init(style: UITableView.Style) {
@@ -114,6 +116,59 @@ class RegisterTableViewController: UITableViewController {
         case add, edit, detail
     }
     
+    
+    // MARK: Func
+    
+    private func makeImageWindow() {
+        guard let imageStr = imageStr,
+           let data = Data(base64Encoded: imageStr, options: .ignoreUnknownCharacters) else {
+            print("表示できる画像がありません")
+            return
+        }
+        
+        imageWindow = UIWindow()
+        
+        guard let selfWindow = self.view.window,
+              let imageWindow = imageWindow else {
+            return
+        }
+        let view = UIImageView(image: UIImage(data: data))
+        let closeButton = UIButton()
+        
+        closeButton.setImage(UIImage(systemName: "xmark"), for: .normal)
+        closeButton.addTarget(self, action: #selector(didTapCloseButton(_:)), for: .touchUpInside)
+        imageWindow.addSubview(closeButton)
+        
+        imageWindow.backgroundColor = .black
+        imageWindow.alpha = 0.8
+        imageWindow.makeKeyAndVisible()
+        imageWindow.addSubview(view)
+        selfWindow.addSubview(imageWindow)
+        
+        imageWindow.translatesAutoresizingMaskIntoConstraints = false
+        imageWindow.topAnchor.constraint(equalTo: selfWindow.topAnchor).isActive = true
+        imageWindow.leadingAnchor.constraint(equalTo: selfWindow.leadingAnchor).isActive = true
+        imageWindow.trailingAnchor.constraint(equalTo: selfWindow.trailingAnchor).isActive = true
+        imageWindow.bottomAnchor.constraint(equalTo: selfWindow.bottomAnchor).isActive = true
+        
+        closeButton.translatesAutoresizingMaskIntoConstraints = false
+        closeButton.topAnchor.constraint(equalTo: imageWindow.topAnchor, constant: 40).isActive = true
+        closeButton.trailingAnchor.constraint(equalTo: imageWindow.trailingAnchor, constant: -15).isActive = true
+        closeButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        closeButton.widthAnchor.constraint(equalToConstant: 40).isActive = true
+        
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.centerYAnchor.constraint(equalTo: imageWindow.centerYAnchor).isActive = true
+        view.centerXAnchor.constraint(equalTo: imageWindow.centerXAnchor).isActive = true
+        view.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.width / 1.2).isActive = true
+        view.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width / 1.2).isActive = true
+    }
+    
+    
+    @objc private func didTapCloseButton(_ sender: UIButton) {
+        imageWindow?.isHidden = true
+        imageWindow = nil
+    }
 }
 
 
@@ -352,12 +407,12 @@ extension RegisterTableViewController: UIImagePickerControllerDelegate, UINaviga
 
 extension RegisterTableViewController: ImageButtonCellDelegate {
     
+
+    
     func didTapImageButton() {
         
         if mode == .detail {
-            // TODO: 画像を拡大
-            print("画像を拡大")
-            
+            makeImageWindow()
         } else {
             switch PHPhotoLibrary.authorizationStatus() {
             case .authorized:
