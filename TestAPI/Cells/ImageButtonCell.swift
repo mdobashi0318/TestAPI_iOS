@@ -7,10 +7,9 @@
 //
 
 import UIKit
-import Photos
 
 protocol ImageButtonCellDelegate: class {
-    func didTapImageCell()
+    func didTapImageButton()
 }
 
 
@@ -18,18 +17,11 @@ final class ImageButtonCell: UITableViewCell {
     
     weak var delegate: ImageButtonCellDelegate!
     
-    @IBOutlet weak var imageV: UIImageView!
+    @IBOutlet weak var imageViewButton: UIButton!
     
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-        
-        if selected {
-            delegate.didTapImageCell()
-        }
+    @IBAction func didTapImageButton(_ sender: UIButton) {
+        delegate.didTapImageButton()
     }
-    
-    
-    
     
 }
 

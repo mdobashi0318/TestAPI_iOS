@@ -21,6 +21,7 @@ protocol RegisterTableViewControllerProtocol {
 }
 
 
+// MARK: - RegisterCellType
 
 fileprivate enum RegisterCellType: Int, CaseIterable {
     case name = 0
@@ -187,7 +188,9 @@ extension RegisterTableViewController {
             
             if let imageStr = imageStr,
                let data = Data(base64Encoded: imageStr, options: .ignoreUnknownCharacters){
-                imageButtonCell.imageV.image = UIImage(data: data)
+                imageButtonCell.imageViewButton.setBackgroundImage(UIImage(data: data), for: .normal)
+            } else {
+                imageButtonCell.imageViewButton.setBackgroundImage(nil, for: .normal)
             }
             
             if mode == .detail {
@@ -334,10 +337,10 @@ extension RegisterTableViewController: UIImagePickerControllerDelegate, UINaviga
         
         if let imageStr = imageStr,
            let data = Data(base64Encoded: imageStr, options: .ignoreUnknownCharacters){
-            imageButtonCell.imageV.image = UIImage(data: data)
+            imageButtonCell.imageViewButton.setBackgroundImage(UIImage(data: data), for: .normal)
         } else {
             imageStr = nil
-            imageButtonCell.imageV.image = nil
+            imageButtonCell.imageViewButton.setBackgroundImage(nil, for: .normal)
         }
     }
     
@@ -349,21 +352,28 @@ extension RegisterTableViewController: UIImagePickerControllerDelegate, UINaviga
 
 extension RegisterTableViewController: ImageButtonCellDelegate {
     
-    func didTapImageCell() {
-        switch PHPhotoLibrary.authorizationStatus() {
-        case .authorized:
-            if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
-                let imagePicker = UIImagePickerController()
-                imagePicker.delegate = self
-                imagePicker.sourceType = .photoLibrary
-                imagePicker.allowsEditing = true
-                self.present(imagePicker, animated: true, completion: nil)
-            }
+    func didTapImageButton() {
+        
+        if mode == .detail {
+            // TODO: 画像を拡大
+            print("画像を拡大")
             
-        default:
-            PHPhotoLibrary.requestAuthorization { _ in
+        } else {
+            switch PHPhotoLibrary.authorizationStatus() {
+            case .authorized:
+                if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
+                    let imagePicker = UIImagePickerController()
+                    imagePicker.delegate = self
+                    imagePicker.sourceType = .photoLibrary
+                    imagePicker.allowsEditing = true
+                    self.present(imagePicker, animated: true, completion: nil)
+                }
+                
+            default:
+                PHPhotoLibrary.requestAuthorization { _ in
+                }
+                
             }
-            
         }
     }
 

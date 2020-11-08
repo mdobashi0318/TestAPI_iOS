@@ -16,21 +16,25 @@
                 <rect key="frame" x="0.0" y="0.0" width="414" height="70"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="B4D-CI-cUy">
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lzF-Bs-Qcv">
                         <rect key="frame" x="10" y="10" width="50" height="50"/>
+                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="50" id="Wav-hw-ify"/>
-                            <constraint firstAttribute="width" constant="50" id="ebo-YR-5V6"/>
+                            <constraint firstAttribute="height" constant="50" id="Rbb-A7-P4L"/>
+                            <constraint firstAttribute="width" constant="50" id="iNW-MT-vTw"/>
                         </constraints>
-                    </imageView>
+                        <connections>
+                            <action selector="didTapImageButton:" destination="SqP-1f-NSI" eventType="touchUpInside" id="iG5-4o-2G8"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="B4D-CI-cUy" firstAttribute="centerY" secondItem="VSP-u6-f1G" secondAttribute="centerY" id="1Uz-Cz-i03"/>
-                    <constraint firstItem="B4D-CI-cUy" firstAttribute="leading" secondItem="VSP-u6-f1G" secondAttribute="leading" constant="10" id="mNq-gO-8IA"/>
+                    <constraint firstItem="lzF-Bs-Qcv" firstAttribute="leading" secondItem="VSP-u6-f1G" secondAttribute="leading" constant="10" id="Bzh-lA-F0G"/>
+                    <constraint firstItem="lzF-Bs-Qcv" firstAttribute="centerY" secondItem="VSP-u6-f1G" secondAttribute="centerY" id="tW5-Wl-E5X"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>
-                <outlet property="imageV" destination="B4D-CI-cUy" id="4Mk-0P-FCN"/>
+                <outlet property="imageViewButton" destination="lzF-Bs-Qcv" id="GqZ-6m-SEd"/>
             </connections>
             <point key="canvasLocation" x="-520.28985507246375" y="46.875"/>
         </tableViewCell>
