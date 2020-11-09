@@ -44,7 +44,7 @@ class TestAPIUITests: XCTestCase {
             
             app.navigationBars.buttons.element(boundBy: 1).tap()
             app.alerts.buttons.element(boundBy: 0).tap()
-            sleep(2)
+            sleep(5)
             XCTAssert(app.tables.cells.firstMatch.staticTexts.element(boundBy: 0).label == inputName, "登録された名前が表示されていない")
             XCTAssert(app.tables.cells.firstMatch.staticTexts.element(boundBy: 1).label == inputText, "登録されたテキストが表示されていない")
             
@@ -60,7 +60,7 @@ class TestAPIUITests: XCTestCase {
         XCTContext.runActivity(named: "更新テスト") { _ in
             let inputNameUpdate = "UpdateName"
             let inputTextUpdate = "UpdateText"
-            
+            sleep(5)
             app.tables.cells.firstMatch.swipeLeft()
             sleep(1)
             app.buttons["編集"].tap()
@@ -77,7 +77,7 @@ class TestAPIUITests: XCTestCase {
             
             app.navigationBars.buttons.element(boundBy: 1).tap()
             app.alerts.buttons.element(boundBy: 0).tap()
-            sleep(2)
+            sleep(5)
             
             XCTAssert(app.tables.cells.firstMatch.staticTexts.element(boundBy: 0).label == inputNameUpdate, "更新された名前が表示されていない")
             XCTAssert(app.tables.cells.firstMatch.staticTexts.element(boundBy: 1).label == inputTextUpdate, "更新されたテキストが表示されていない")

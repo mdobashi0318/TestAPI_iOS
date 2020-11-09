@@ -26,7 +26,7 @@ class RegisterViewControllerPresenterTest: XCTestCase {
     func test_postRequest() throws {
         let exp = expectation(description: "post")
         
-        presenter?.postRequest(name: "UnitTest", text: "UnitTestText", success: { 
+        presenter?.postRequest(name: "UnitTest", text: "UnitTestText", image: nil, success: { 
             exp.fulfill()
         }, failure: { _, _ in
             
@@ -40,7 +40,7 @@ class RegisterViewControllerPresenterTest: XCTestCase {
     func test_puttRequest() throws {
         let exp = expectation(description: "put")
         
-        presenter?.putRequest(id: 1, name: "UnitPutTest", text: "UnitPutTestText", success: {
+        presenter?.putRequest(id: 1, name: "UnitPutTest", text: "UnitPutTestText", image: nil, success: {
             ///
             exp.fulfill()
         }, failure: { _, _ in
