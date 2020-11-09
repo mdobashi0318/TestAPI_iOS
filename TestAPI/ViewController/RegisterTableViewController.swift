@@ -248,10 +248,8 @@ extension RegisterTableViewController {
                 imageButtonCell.imageViewButton.setBackgroundImage(nil, for: .normal)
             }
             
-            if mode == .detail {
-                imageButtonCell.isSelected = false
-                imageButtonCell.selectionStyle = .none
-            }
+            imageButtonCell.isSelected = false
+            imageButtonCell.selectionStyle = .none
             
             return imageButtonCell
         case .none:
@@ -276,10 +274,7 @@ extension RegisterTableViewController {
     
     
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        if mode == .detail {
             return nil
-        }
-        return indexPath
     }
     
     
