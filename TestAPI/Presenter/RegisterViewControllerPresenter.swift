@@ -8,16 +8,26 @@
 
 import Foundation
 
-class RegisterViewControllerPresenter {
-    
-    private(set) var model: UsersModel?
+final class RegisterViewControllerPresenter {
     
     /// ユーザー名を作成する
-    func postRequest(name: String, text: String, success: @escaping()->(Void), failure: @escaping (String?)->()) {
-        UsersModel.postRequest(name: name, text: text) { afError in
+    func postRequest(name: String?, text: String?, image: String?, success: @escaping()->(Void), failure: @escaping (String? ,String)->()) {
+        
+        guard let name = name else {
+            failure(nil, "名前が入力されていません")
+            return
+        }
+        
+        guard let text = text else {
+            failure(nil, "テキストが入力されていません")
+            return
+        }
+        
+        
+        UsersModel.postRequest(name: name, text: text, image: image) { afError in
             if let _afError = afError {
                 print(_afError)
-                failure("接続に失敗しました")
+                failure("接続に失敗しました", "時間をおいて再度お試しください")
                 return
                 
             }
@@ -32,12 +42,23 @@ class RegisterViewControllerPresenter {
     ///   - id: ID
     ///   - name: 変更する名前
     ///   - text: 変更するテキスト
-    func putRequest(id: String?, name: String, text: String, success: @escaping()->(Void), failure: @escaping (String?)->()) {
+    func putRequest(id: Int?, name: String?, text: String?, image: String?, success: @escaping()->(Void), failure: @escaping (String? ,String)->()) {
+        
+        guard let name = name else {
+            failure(nil, "名前が入力されていません")
+            return
+        }
+        
+        guard let text = text else {
+            failure(nil, "テキストが入力されていません")
+            return
+        }
     
-        UsersModel.putRequest(id: id, name: name, text: text) { afError in
+    
+        UsersModel.putRequest(id: id, name: name, text: text, image: image) { afError in
             if let _afError = afError {
                 print(_afError)
-                failure("接続に失敗しました")
+                failure("接続に失敗しました", "時間をおいて再度お試しください")
                 return
                 
             }

@@ -45,13 +45,13 @@ class TestAPITests: XCTestCase, TestRegisterVCProtocol {
     
     /// RegisterViewController
     func test_RegisterVCInitMode() {
-        var vc = RegisterViewController()
+        var vc = RegisterTableViewController(mode: .add, userModel: nil)
         XCTAssertEqual(vc.mode, .add, "Modeが違う")
         
-        vc = RegisterViewController(mode: .detail, userModel: nil)
+        vc = RegisterTableViewController(mode: .detail, userModel: nil)
         XCTAssertEqual(vc.mode, .detail, "Modeが違う")
         
-        vc = RegisterViewController(mode: .edit, userModel: nil)
+        vc = RegisterTableViewController(mode: .edit, userModel: nil)
         XCTAssertEqual(vc.mode, .edit, "Modeが違う")
         
     }

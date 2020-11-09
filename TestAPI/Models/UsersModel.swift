@@ -7,11 +7,10 @@
 //
 
 
-import Unbox
 import Alamofire
 
 
-class UsersModel: Unboxable {
+class UsersModel: Codable {
     
     // MARK: Properties
     
@@ -19,36 +18,16 @@ class UsersModel: Unboxable {
     private static let url = URL(string: "http://localhost:3000/api/v1/users")
     
     /// ID
-    var id: String?
+    var id: Int?
     
     /// 名前
     var name: String?
     
     /// テキスト
     var text: String?
-        
     
-    
-    
-    // MARK: Init
-    
-    required init(unboxer: Unboxer) throws {
-        id = try? unboxer.unbox(key: "id")
-        name = try? unboxer.unbox(key: "name")
-        text = try? unboxer.unbox(key: "text")
-    }
-    
-    
-    
-    
-    // MARK: Class Func
-    
-    // JSONをUsersModelに格納できるよう変換
-    class func unboxDictionary(dictionary: Any) -> UsersModel {
-        return  try! unbox(dictionary: dictionary as! UnboxableDictionary)
-    }
-    
-    
+    /// 画像
+    var image: String?
     
     
     // MARK: Request
@@ -60,7 +39,9 @@ class UsersModel: Unboxable {
     class func fetchUsers(callBack: @escaping([UsersModel], AFError?, Error?) -> ()) {
         var usersModel = [UsersModel]()
         
-        AF.request(url!, method: .get, headers: .none).response { response in  
+        AF.request(url!, method: .get, headers: .none).response { response in
+            
+
             guard response.error == nil else {
                 callBack(usersModel, response.error, nil)
                 return
@@ -68,12 +49,8 @@ class UsersModel: Unboxable {
             
             
             do {
-                let json = try JSONSerialization.jsonObject(with: response.data!, options: .fragmentsAllowed) as! [Any]
-                usersModel = json.map { user -> UsersModel in
-                    print("user = \(user)")
-                    
-                    return UsersModel.unboxDictionary(dictionary: user)
-                }
+                usersModel = try JSONDecoder().decode([UsersModel].self, from: response.data!)
+
             } catch {
                 callBack(usersModel, nil, error)
             }
@@ -93,9 +70,9 @@ class UsersModel: Unboxable {
     ///   - viewController: 呼び出し元のVIewController
     ///   - name: 登録する名前
     ///   - text: 登録するテキスト
-    class func postRequest(name: String, text: String, callBack: @escaping(AFError?) -> ()) {
+    class func postRequest(name: String, text: String, image: String?, callBack: @escaping(AFError?) -> ()) {
         let params:[String:Any] = [
-            "user":["name":name, "text":text]
+            "user":["name":name, "text":text, "image":image ?? ""]
         ]
         
         AF.request(url!, method: .post, parameters: params).response { response in
@@ -119,7 +96,7 @@ class UsersModel: Unboxable {
     ///   - id: ID
     ///   - name: 変更する名前
     ///   - text: 変更するテキスト
-    class func putRequest(id: String?, name: String, text: String, callBack: @escaping(AFError?) -> ()) {
+    class func putRequest(id: Int?, name: String, text: String, image: String?, callBack: @escaping(AFError?) -> ()) {
         
         guard let _id = id else {
             print("idの取得に失敗")
@@ -129,10 +106,8 @@ class UsersModel: Unboxable {
         let acccesURL = URL(string: String("\(url!)/\(_id)"))
         
         let params:[String:Any] = [
-            "user":["name":name, "text":text]
+            "user":["name":name, "text":text, "image":image ?? ""]
         ]
-        
-        
         
         AF.request(acccesURL!, method: .put, parameters: params).response { response in
             

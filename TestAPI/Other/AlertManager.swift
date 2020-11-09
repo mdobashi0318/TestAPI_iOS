@@ -11,7 +11,7 @@ import UIKit
 struct AlertManager {
    
     /// 閉じるボタンが付いたアラート
-    func alertAction(viewController:UIViewController, title: String, message: String, didTapButton: @escaping (UIAlertAction) -> ()){
+    func alertAction(viewController:UIViewController, title: String? = nil, message: String, didTapButton: @escaping (UIAlertAction) -> ()){
         let controller:UIAlertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
         controller.addAction(UIAlertAction(title: "閉じる",
@@ -24,7 +24,7 @@ struct AlertManager {
     
     
     /// 「削除」、「閉じる」が付いたアラート
-    func alertDeleteAction(viewController:UIViewController, title: String?, message: String,  deleteButton: String = "削除", closeButton: String = "閉じる", didTapDeleteButton: @escaping (UIAlertAction)->(),didTapCloseButton: @escaping (UIAlertAction) -> ()){
+    func alertDeleteAction(viewController:UIViewController, title: String? = nil, message: String,  deleteButton: String = "削除", closeButton: String = "閉じる", didTapDeleteButton: @escaping (UIAlertAction)->(),didTapCloseButton: @escaping (UIAlertAction) -> ()){
         let controller:UIAlertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
         controller.addAction(UIAlertAction(title: deleteButton,
@@ -42,7 +42,7 @@ struct AlertManager {
     
     
     /// 「はい」、「いいえ」が付いたアラート
-    func alertAction(viewController:UIViewController, title: String?, message: String, didTapYesButton: @escaping (UIAlertAction)->(),didTapNoButton: @escaping (UIAlertAction) -> ()){
+    func alertAction(viewController:UIViewController, title: String? = nil, message: String, didTapYesButton: @escaping (UIAlertAction)->(),didTapNoButton: @escaping (UIAlertAction) -> ()){
         let controller:UIAlertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
         controller.addAction(UIAlertAction(title: "はい",
