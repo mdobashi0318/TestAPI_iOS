@@ -403,7 +403,6 @@ extension RegisterTableViewController: UIImagePickerControllerDelegate, UINaviga
 extension RegisterTableViewController: ImageButtonCellDelegate {
     
 
-    
     func didTapImageButton() {
         
         if mode == .detail {
@@ -411,20 +410,32 @@ extension RegisterTableViewController: ImageButtonCellDelegate {
         } else {
             switch PHPhotoLibrary.authorizationStatus() {
             case .authorized:
-                if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
-                    let imagePicker = UIImagePickerController()
-                    imagePicker.delegate = self
-                    imagePicker.sourceType = .photoLibrary
-                    imagePicker.allowsEditing = true
-                    self.present(imagePicker, animated: true, completion: nil)
-                }
+                imagePicker()
                 
             default:
-                PHPhotoLibrary.requestAuthorization { _ in
+                PHPhotoLibrary.requestAuthorization { status in
+                    if status == .authorized {
+                        DispatchQueue.main.async { [weak self] in
+                            self?.imagePicker()
+                        }
+                    }
                 }
                 
             }
         }
     }
+    
+    
+    
+    private func imagePicker() {
+        if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
+            let imagePicker = UIImagePickerController()
+            imagePicker.delegate = self
+            imagePicker.sourceType = .photoLibrary
+            imagePicker.allowsEditing = true
+            self.present(imagePicker, animated: true, completion: nil)
+        }
+    }
+    
 
 }
